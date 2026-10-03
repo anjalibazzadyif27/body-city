@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Body City</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Mukta:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EAF4F2; --surface:#FFFFFF; --ink:#1F2B45; --muted:#56627A; --line:#D3E1DE;
+  --marigold:#F2A20C; --rani:#C93468; --peacock:#0E7A7E; --leaf:#3E8E3A;
+  --good:#3E8E3A; --ok:#D98A00; --poor:#C93468;
+  --display:"Baloo 2", "Trebuchet MS", system-ui, sans-serif;
+  --body:"Mukta", "Segoe UI", system-ui, sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A2B; --surface:#1B2539; --ink:#EAF0F7; --muted:#A9B4C7; --line:#2E3A52;
+    --marigold:#F5B53A; --rani:#E0588A; --peacock:#45B5B7; --leaf:#6CC060;
+    --good:#6CC060; --ok:#F5B53A; --poor:#E0588A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A2B; --surface:#1B2539; --ink:#EAF0F7; --muted:#A9B4C7; --line:#2E3A52;
+  --marigold:#F5B53A; --rani:#E0588A; --peacock:#45B5B7; --leaf:#6CC060;
+  --good:#6CC060; --ok:#F5B53A; --poor:#E0588A;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--marigold);outline-offset:3px}
+
+.app{max-width:1180px;margin:0 auto;padding:16px 16px 32px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 14px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.01em;line-height:1}
+.brand svg{width:34px;height:34px}
+.top .tagline{color:var(--muted);font-size:15px;text-align:right;max-width:24ch;line-height:1.3}
+
+.layout{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+.stage,.panel{min-width:0}
+@media (min-width:900px){
+  .layout{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;align-items:start}
+  .stage{position:sticky;top:calc(16px + env(safe-area-inset-top,0px))}
+}
+.frame{border:3px solid #1F2B45;border-radius:28px;overflow:hidden;background:#BFE6EE;box-shadow:6px 6px 0 #1F2B45}
+.frame svg{display:block;width:100%;height:auto}
+.ticker{display:flex;align-items:stretch;background:#C93468;color:#fff;border-top:3px solid #1F2B45;height:38px;overflow:hidden}
+.ticker .tag{flex:none;background:#1F2B45;color:#fff;font-family:var(--display);font-weight:700;font-size:15px;padding:0 12px;display:flex;align-items:center}
+.ticker .track{flex:1;min-width:0;overflow:hidden;position:relative;display:flex;align-items:center}
+.ticker .run{white-space:nowrap;display:inline-block;padding-left:100%;animation:marquee var(--dur,30s) linear infinite;font-weight:500;font-size:15px}
+.ticker .run span{margin-right:44px}
+.ticker .run span::before{content:"◆";color:#F5C518;margin-right:10px;font-size:11px;vertical-align:2px}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.hint{font-size:14px;color:var(--muted);margin:10px 4px 0;text-align:center}
+@media (max-width:899px){
+  body.checking .stage{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0 10px}
+  body.checking .frame{width:calc(max(38vh,250px) * 0.8333 + 6px);max-width:100%;margin:0 auto}
+  body.checking .frame svg{height:max(38vh,250px);width:calc(max(38vh,250px) * 0.8333);max-width:100%}
+  body.checking .hint{display:none}
+}
+@media (max-width:520px){.top .tagline{display:none}}
+
+.panel{background:var(--surface);border:2px solid var(--line);border-radius:24px;padding:24px 22px}
+@media (min-width:520px){.panel{padding:30px 30px}}
+h1,h2,h3{font-family:var(--display);line-height:1.15;margin:0}
+h1{font-size:clamp(34px,6vw,48px);font-weight:800;letter-spacing:-.015em}
+h2{font-size:clamp(26px,4.4vw,34px);font-weight:800;letter-spacing:-.01em}
+h3{font-size:20px;font-weight:700}
+p{margin:0}
+.lede{color:var(--muted);margin-top:10px;max-width:46ch}
+.stack>*+*{margin-top:18px}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:13px 22px;font-family:var(--display);font-weight:700;font-size:18px;border:2px solid #1F2B45;line-height:1.1;min-height:50px}
+.btn.primary{background:var(--marigold);color:#1F2B45;box-shadow:3px 3px 0 #1F2B45}
+.btn.primary:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #1F2B45}
+.btn.ghost{background:transparent;border-color:var(--ink)}
+.btn.link{border:none;background:none;padding:6px 2px;min-height:0;font-size:16px;text-decoration:underline;text-underline-offset:3px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+.presets{display:grid;gap:10px}
+.preset{display:flex;gap:14px;align-items:center;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:18px;padding:12px 14px}
+.preset:hover{border-color:var(--peacock)}
+.preset .emo{font-size:28px;line-height:1}
+.preset b{font-family:var(--display);font-size:18px;display:block;line-height:1.2}
+.preset small{color:var(--muted);font-size:14.5px;line-height:1.35;display:block}
+
+.progress{display:flex;gap:6px}
+.progress i{flex:1;height:7px;border-radius:7px;background:var(--line)}
+.progress i.done{background:var(--peacock)}
+.progress i.now{background:var(--marigold)}
+.qmeta{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:15px;margin-top:10px}
+.feeds{display:inline-flex;align-items:center;gap:6px;font-size:15px;color:var(--muted);margin-top:8px}
+.choices{display:grid;gap:10px;margin-top:18px;grid-template-columns:1fr 1fr}
+.chip{display:block;width:100%;text-align:left;padding:12px 14px;border:2px solid var(--line);border-radius:16px;background:var(--surface);font-size:17px;font-weight:500;line-height:1.3;min-height:56px;transition:border-color .15s,background .15s}
+.chip:hover{border-color:var(--peacock)}
+.chip[aria-pressed="true"]{background:var(--peacock);border-color:var(--peacock);color:#fff}
+.reaction{min-height:52px;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--bg);font-weight:500;display:flex;align-items:center;gap:10px}
+.reaction:empty{visibility:hidden}
+
+.scoreline{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.score{font-family:var(--display);font-weight:800;font-size:76px;line-height:.85}
+.score small{font-size:26px;color:var(--muted);font-weight:700}
+.word{font-family:var(--display);font-weight:700;font-size:22px;line-height:1.1;padding-bottom:6px}
+.word span{display:block;font-family:var(--body);font-weight:500;font-size:15px;color:var(--muted)}
+.mayor{background:#FFF2CC;color:#1F2B45;border:2px solid #1F2B45;border-radius:18px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.mayor .hat{font-size:30px;line-height:1}
+.mayor h3{font-size:18px;margin-bottom:2px}
+.news{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.news li{padding:10px 14px;border-radius:12px;background:var(--bg);font-weight:500;line-height:1.35}
+.districts{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.dbtn{display:flex;gap:10px;align-items:center;text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 12px;min-height:56px}
+.dbtn:hover{border-color:var(--peacock)}
+.dbtn b{font-family:var(--display);font-weight:700;display:block;line-height:1.15;font-size:16px}
+.dbtn small{color:var(--muted);font-size:13.5px;display:block;line-height:1.2}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;border:2px solid #1F2B45}
+.dot.good{background:#4FB04A}.dot.ok{background:#F2B21C}.dot.poor{background:#E2486F}
+.section-h{font-family:var(--display);font-weight:700;font-size:19px;margin-bottom:8px}
+.banner{background:var(--bg);border-radius:14px;padding:10px 14px;font-size:15px;color:var(--muted)}
+
+.week{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:520px){.week{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.wday{border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:6px;text-align:left}
+.wday:hover{border-color:var(--peacock)}
+.wday .mini-wrap{border-radius:11px;overflow:hidden;border:2px solid #1F2B45;background:#BFE6EE}
+.wday .mini-wrap svg{display:block;width:100%;height:auto}
+.wday .lab{display:flex;justify-content:space-between;align-items:baseline;padding:6px 4px 2px;font-size:14px}
+.wday .lab b{font-family:var(--display);font-size:16px}
+.wday.empty .mini-wrap{display:flex;align-items:center;justify-content:center;aspect-ratio:400/480;background:var(--bg);border-style:dashed;border-color:var(--line);color:var(--muted);font-size:13px;text-align:center;padding:8px}
+
+.foot{margin-top:28px;display:flex;flex-wrap:wrap;gap:6px 18px;justify-content:space-between;align-items:center;color:var(--muted);font-size:14px;padding:0 4px}
+
+.sheet-back{position:fixed;inset:0;background:rgba(15,22,38,.45);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.sheet-back[hidden]{display:none}
+.sheet{background:var(--surface);color:var(--ink);border:3px solid #1F2B45;border-radius:24px;max-width:520px;width:100%;padding:22px;box-shadow:6px 6px 0 #1F2B45;max-height:85vh;overflow:auto}
+@media (min-width:700px){.sheet-back{align-items:center}}
+.sheet .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet .close{border:2px solid var(--line);background:var(--surface);border-radius:999px;width:40px;height:40px;font-size:20px;line-height:1;flex:none}
+.sheet .state{display:inline-flex;align-items:center;gap:8px;font-weight:600;margin-top:10px}
+.sheet h4{font-family:var(--display);font-size:17px;margin:16px 0 2px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1F2B45;color:#fff;padding:10px 18px;border-radius:999px;font-weight:500;z-index:30;max-width:calc(100% - 32px);text-align:center}
+.toast[hidden]{display:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media (prefers-reduced-motion: reduce){
+  .ticker .run{animation:none;padding-left:14px}
+  *{transition:none !important}
+}
+
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:999px;padding:4px;margin:-6px 0 22px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;border:none;background:none;border-radius:999px;padding:9px 8px;font-family:var(--display);font-weight:700;font-size:14.5px;color:var(--muted);white-space:nowrap}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 0 0 2px #1F2B45}
+.demo-bar{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;justify-content:space-between;background:#E3F3F1;color:#0B4F52;border:2px dashed #0E7A7E;border-radius:14px;padding:8px 12px;font-size:14.5px;margin:-4px 0 18px}
+:root[data-theme="dark"] .demo-bar{background:#16353A;color:#BFECEA}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .demo-bar{background:#16353A;color:#BFECEA}}
+.demo-bar .btn.link{color:inherit;padding:2px}
+
+.field{padding:14px 0;border-top:1px solid var(--line)}
+.field:first-of-type{border-top:none;padding-top:4px}
+.field label,.field .flab{display:block;font-weight:600;line-height:1.3}
+.field small{display:block;color:var(--muted);font-size:14px;line-height:1.35;margin-top:2px}
+.stepper{display:flex;align-items:center;gap:12px;margin-top:10px}
+.stepper button{width:52px;height:52px;border-radius:16px;border:2px solid #1F2B45;background:var(--surface);font-family:var(--display);font-size:28px;font-weight:700;line-height:1;display:flex;align-items:center;justify-content:center}
+.stepper button:active{background:var(--bg)}
+.stepper .val{min-width:96px;text-align:center;font-family:var(--display);font-weight:800;font-size:30px;line-height:1}
+.stepper .val small{display:inline;font-size:16px;color:var(--muted);font-weight:600;margin-left:2px}
+.stepper .tgt{font-size:14px;color:var(--muted);line-height:1.3}
+.faces{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}
+.faces .chip,.three .chip{text-align:center;padding:8px 4px;min-height:64px;font-size:13.5px}
+.faces .chip span{display:block;font-size:24px;line-height:1.2}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+.three .chip{min-height:48px;font-size:15px}
+.navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px}
+
+.vs{display:grid;gap:10px}
+.vrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:10px 12px;text-align:left;background:var(--surface);width:100%}
+.vrow:hover{border-color:var(--peacock)}
+.vrow b{font-family:var(--display);font-size:16px;line-height:1.2;display:flex;align-items:center;gap:8px}
+.vrow .num{font-family:var(--display);font-weight:800;font-size:20px}
+.vrow small{grid-column:1 / -1;color:var(--muted);font-size:14px;line-height:1.35}
+.bar{grid-column:1 / -1;height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:4px 0 2px}
+.bar i{display:block;height:100%;border-radius:8px}
+.insight{display:flex;gap:12px;align-items:flex-start;background:var(--bg);border-radius:14px;padding:12px 14px;line-height:1.4}
+.insight .ic{font-size:22px;line-height:1.2;flex:none}
+.note{font-size:13.5px;color:var(--muted);line-height:1.4}
+.src{font-size:13px;color:var(--muted);line-height:1.4;margin-top:4px}
+
+.plan-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.pbar{height:12px;border-radius:12px;background:var(--line);overflow:hidden;border:2px solid #1F2B45}
+.pbar i{display:block;height:100%;background:repeating-linear-gradient(45deg,#F5C518 0 10px,#F2A20C 10px 20px)}
+.tasks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.task{display:flex;gap:12px;align-items:center;border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface)}
+.task.today{border-color:#1F2B45;box-shadow:3px 3px 0 #F2A20C}
+.task.locked{opacity:.55}
+.task .tick{width:34px;height:34px;flex:none;border-radius:10px;border:2px solid #1F2B45;background:var(--surface);font-size:18px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.task .tick[aria-pressed="true"]{background:#4FB04A;color:#fff}
+.task .tick:disabled{cursor:default;border-style:dashed}
+.task .tx{line-height:1.35}
+.task .tx small{display:block;color:var(--muted);font-size:13px}
+.pick{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+
+.chat{position:relative;display:flex;flex-direction:column;gap:10px;max-height:min(52vh,460px);overflow-y:auto;padding:4px 2px;scroll-behavior:smooth}
+.msg{max-width:88%;padding:10px 14px;border-radius:18px;line-height:1.45;font-size:16px}
+.msg.me{align-self:flex-end;background:#0E7A7E;color:#fff;border-bottom-right-radius:6px}
+.msg.bot{align-self:flex-start;background:var(--bg);border-bottom-left-radius:6px}
+.msg.bot .who{font-family:var(--display);font-weight:700;font-size:14px;color:var(--muted);display:block;margin-bottom:2px}
+.msg.bot p+p{margin-top:8px}
+.suggest{display:flex;gap:8px;flex-wrap:wrap}
+.suggest button{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:14.5px;line-height:1.2}
+.suggest button:hover{border-color:var(--peacock)}
+.ask{display:flex;gap:8px}
+.ask input{flex:1;min-width:0;border:2px solid #1F2B45;border-radius:999px;padding:12px 16px;font:inherit;background:var(--surface);color:var(--ink)}
+.ask .btn{min-height:48px;padding:10px 18px}
+.switch{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+.switch input{width:18px;height:18px;accent-color:#0E7A7E}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand" aria-label="Body City">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect x="1.5" y="1.5" width="31" height="31" rx="10" fill="#F2A20C" stroke="#1F2B45" stroke-width="3"/><path d="M7 26V15h6v11M14 26V9h7v17M22 26V13h5v13" fill="#fff" stroke="#1F2B45" stroke-width="2.4" stroke-linejoin="round"/><path d="M16.5 15.5c-1.6-1.4-.4-3 1-2 1.4-1 2.6.6 1 2l-1 .9z" fill="#C93468"/></svg>
+      Body City
+    </div>
+    <p class="tagline">Your daily habits, built into a city</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Your city">
+      <div class="frame">
+        <div id="cityHost"></div>
+        <div class="ticker" id="ticker" aria-hidden="true">
+          <div class="tag">City News</div>
+          <div class="track"><div class="run" id="tickerRun"></div></div>
+        </div>
+      </div>
+      <p class="hint">Tap any part of the city to see what it means for your body.</p>
+    </section>
+
+    <section class="panel" id="panel" aria-live="polite"></section>
+  </main>
+
+  <footer class="foot">
+    <span>Body City is for awareness, not medical advice. Your data stays on this device.</span>
+    <button class="btn link" id="resetBtn" data-action="reset">Reset my city</button>
+  </footer>
+</div>
+
+<div class="sheet-back" id="sheetBack" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" id="sheet"></div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- City SVG ---------- */
+var INK="#1F2B45";
+function auto(x,y,flip){
+  var t = flip ? "translate("+(x+31)+","+y+") scale(-1,1)" : "translate("+x+","+y+")";
+  return '<g transform="'+t+'"><rect x="5" y="-1" width="24" height="6" rx="2.5" fill="#F5C518" stroke="'+INK+'" stroke-width="1.2"/><path d="M2 14 Q2 5 9 5 L26 5 Q30 5 30 10 L30 16 L2 16 Z" fill="#2E9E5B" stroke="'+INK+'" stroke-width="1.2"/><rect x="18" y="7" width="9" height="5" rx="1" fill="#CFEAF0"/><circle cx="8" cy="17" r="3.4" fill="'+INK+'"/><circle cx="25" cy="17" r="3.4" fill="'+INK+'"/></g>';
+}
+function car(x,y,flip,col){
+  var t = flip ? "translate("+(x+34)+","+y+") scale(-1,1)" : "translate("+x+","+y+")";
+  return '<g transform="'+t+'"><path d="M8 7 L12 1 L24 1 L28 7 Z" fill="'+col+'" stroke="'+INK+'" stroke-width="1.2"/><rect x="1" y="6" width="33" height="10" rx="3" fill="'+col+'" stroke="'+INK+'" stroke-width="1.2"/><rect x="13" y="2.5" width="10" height="4" fill="#CFEAF0"/><circle cx="9" cy="17" r="3.4" fill="'+INK+'"/><circle cx="27" cy="17" r="3.4" fill="'+INK+'"/></g>';
+}
+function veh(i,x,y,flip){ var cols=["#E2486F","#3B82C4","#F2F2F2","#8E6CC8"]; return i%2===0 ? auto(x,y,flip) : car(x,y,flip,cols[i%4]); }
+
+function crane(k,x,y){
+  return '<g class="crane crane-'+k+'" transform="translate('+x+','+y+')"><path d="M-14 0 L-8 -10 L-2 0 Z M4 0 L10 -10 L16 0 Z" fill="#F28C28" stroke="'+INK+'" stroke-width="1"/>'+
+  '<rect x="-3" y="-74" width="7" height="74" fill="#F5C518" stroke="'+INK+'" stroke-width="1.3"/>'+
+  '<path d="M-3 -64 L4 -56 M4 -64 L-3 -56 M-3 -48 L4 -40 M4 -48 L-3 -40 M-3 -32 L4 -24 M4 -32 L-3 -24 M-3 -16 L4 -8 M4 -16 L-3 -8" stroke="'+INK+'" stroke-width=".8"/>'+
+  '<rect x="-24" y="-79" width="60" height="5" fill="#F5C518" stroke="'+INK+'" stroke-width="1.3"/><rect x="-26" y="-82" width="9" height="9" fill="'+INK+'"/>'+
+  '<rect x="-6" y="-70" width="12" height="8" rx="1.5" fill="#fff" stroke="'+INK+'" stroke-width="1.2"/>'+
+  '<g class="hook"><path d="M30 -74 V-46" stroke="'+INK+'" stroke-width="1.2"/><rect x="25" y="-46" width="10" height="8" fill="#0E7A7E" stroke="'+INK+'" stroke-width="1.1"/></g></g>';
+}
+function buildCity(){
+  var svg = [];
+  svg.push('<svg class="city" viewBox="0 0 400 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="cityTitle" data-brain="ok" data-gut="ok" data-water="ok" data-heart="ok" data-mind="ok" data-posture="ok">');
+  svg.push('<title id="cityTitle">Body City</title>');
+  svg.push('<defs><linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86CFE4"/><stop offset="1" stop-color="#E4F5EE"/></linearGradient><linearGradient id="skyP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AA3B2"/><stop offset="1" stop-color="#D9DCE2"/></linearGradient></defs>');
+  // style lives inside the svg so the postcard export keeps it
+  var css = [];
+  css.push('.v-good,.v-ok,.v-poor,.v-goodok,.v-okpoor{opacity:0;transition:opacity .7s ease}');
+  ORDER.forEach(function(k){
+    css.push('[data-'+k+'="good"] .'+k+' .v-good,[data-'+k+'="ok"] .'+k+' .v-ok,[data-'+k+'="poor"] .'+k+' .v-poor,[data-'+k+'="good"] .'+k+' .v-goodok,[data-'+k+'="ok"] .'+k+' .v-goodok,[data-'+k+'="ok"] .'+k+' .v-okpoor,[data-'+k+'="poor"] .'+k+' .v-okpoor{opacity:1}');
+    css.push('[data-'+k+'="good"] .tg-'+k+' .tdot{fill:#4FB04A}[data-'+k+'="ok"] .tg-'+k+' .tdot{fill:#F2B21C}[data-'+k+'="poor"] .tg-'+k+' .tdot{fill:#E2486F}');
+    css.push('[data-focus="'+k+'"] .d:not(.'+k+'),[data-focus="'+k+'"] .tg:not(.tg-'+k+'){opacity:.32}');
+  });
+  css.push('.d,.tg{transition:opacity .4s ease}.d{cursor:pointer}.tg{cursor:pointer}');
+  css.push('.tg:focus{outline:none}.tg:focus-visible .tbg{stroke:#F2A20C;stroke-width:3.5}');
+  css.push('.skyP{opacity:.35;transition:opacity .8s}[data-brain="good"] .skyP{opacity:0}[data-brain="poor"] .skyP{opacity:.9}');
+  css.push('.sun{transition:opacity .8s}[data-brain="ok"] .sun{opacity:.75}[data-brain="poor"] .sun{opacity:.2}');
+  css.push('.fog{opacity:.4;transition:opacity .9s;pointer-events:none}[data-brain="good"] .fog{opacity:0}[data-brain="poor"] .fog{opacity:.92}');
+  css.push('.fog ellipse{animation:drift 9s ease-in-out infinite alternate}.fog ellipse:nth-child(2n){animation-duration:12s;animation-direction:alternate-reverse}');
+  css.push('@keyframes drift{from{transform:translateX(-14px)}to{transform:translateX(14px)}}');
+  css.push('.beacon{fill:#FFD95A;transition:fill .6s}[data-brain="good"] .beacon{animation:glow 2.4s ease-in-out infinite}[data-brain="poor"] .beacon{fill:#FF4D5E;animation:blink 1s steps(2) infinite}');
+  css.push('@keyframes glow{50%{opacity:.55}}@keyframes blink{50%{opacity:.15}}');
+  css.push('.podwin{fill:#CFF3F1;transition:fill .6s}[data-brain="poor"] .podwin{fill:#5D6375}');
+  css.push('.win{fill:#FFD95A;transition:fill .6s}[data-heart="ok"] .win.f1{fill:#3B4258}[data-heart="ok"] .win.f2{animation:flick 2.6s infinite}[data-heart="poor"] .win{fill:#3B4258}[data-heart="poor"] .win.f2{animation:flick 1.7s infinite}');
+  css.push('@keyframes flick{0%,44%,56%,100%{fill:#3B4258}48%,52%{fill:#FFD95A}}');
+  css.push('.heartsign{fill:#FF5C7A;transform-box:fill-box;transform-origin:center;transition:fill .6s}[data-heart="good"] .heartsign{animation:beat 1.1s ease-in-out infinite}[data-heart="ok"] .heartsign{fill:#E2A1AE}[data-heart="poor"] .heartsign{fill:#5D6375}');
+  css.push('@keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.18)}30%{transform:scale(1)}45%{transform:scale(1.12)}}');
+  css.push('.energy{stroke:#FFD95A;stroke-width:2.6;stroke-dasharray:4 12;fill:none;animation:flow 1.1s linear infinite;transition:opacity .6s}[data-heart="ok"] .energy{opacity:.45;animation-duration:2.6s}[data-heart="poor"] .energy{opacity:0}');
+  css.push('@keyframes flow{to{stroke-dashoffset:-32}}');
+  css.push('.water{stroke:#4FB3D9;stroke-width:32;fill:none;transition:stroke-width 1s ease}[data-water="good"] .water{stroke-width:60}[data-water="poor"] .water{stroke-width:7}');
+  css.push('.ripple{stroke:#fff;stroke-width:2;stroke-linecap:round;fill:none;stroke-dasharray:8 26;opacity:.75;animation:flow 2.2s linear infinite;transition:opacity .6s}[data-water="poor"] .ripple{opacity:0}');
+  css.push('.boat{animation:bob 2.8s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-3px) rotate(-2deg)}}');
+  css.push('.c1,.c2,.c3{transition:fill .9s}.c1{fill:#2F7D3A}.c2{fill:#46A04A}.c3{fill:#6DBE5A}');
+  css.push('[data-mind="ok"] .c1{fill:#6E8B3D}[data-mind="ok"] .c2{fill:#8EA34B}[data-mind="ok"] .c3{fill:#AFB85C}');
+  css.push('[data-mind="poor"] .c1{fill:#8C7A55}[data-mind="poor"] .c2{fill:#A6916A}[data-mind="poor"] .c3{fill:#BFAB82}');
+  css.push('.drive{animation:driveR 9s linear infinite}.drive.l{animation-name:driveL}.slow .drive{animation-duration:20s}');
+  css.push('@keyframes driveR{from{transform:translateX(-90px)}to{transform:translateX(470px)}}@keyframes driveL{from{transform:translateX(470px)}to{transform:translateX(-90px)}}');
+  css.push('.honk{animation:blink .8s steps(2) infinite;font:700 10px "Baloo 2",sans-serif;fill:#C93468}.honk:nth-of-type(2n){animation-delay:.4s}');
+  css.push('.crane{opacity:0;transition:opacity .8s;pointer-events:none}'+ORDER.map(function(k){return '[data-repair="'+k+'"] .crane-'+k;}).join(",")+'{opacity:1}');
+  css.push('.hook{animation:hook 3s ease-in-out infinite}@keyframes hook{50%{transform:translateY(8px)}}');
+  css.push('.mini .tg{display:none}.mini *{animation:none !important}');
+  css.push('@media (prefers-reduced-motion: reduce){*{animation:none !important}}');
+  svg.push('<style>'+css.join("")+'</style>');
+
+  // sky
+  svg.push('<rect width="400" height="480" fill="url(#skyG)"/><rect class="skyP" width="400" height="300" fill="url(#skyP)"/>');
+  svg.push('<circle class="sun" cx="345" cy="56" r="22" fill="#FFD86B"/>');
+  svg.push('<g fill="#fff" opacity=".9"><ellipse cx="92" cy="58" rx="26" ry="9"/><ellipse cx="106" cy="51" rx="15" ry="9"/><ellipse cx="262" cy="34" rx="22" ry="7"/></g>');
+  svg.push('<path d="M0 226 Q55 192 112 212 T232 204 T400 198 V300 H0 Z" fill="#CFE6B8"/>');
+
+  // POWER STATION (heart)
+  svg.push('<g class="d heart" data-d="heart">');
+  svg.push('<path d="M30 228 Q40 192 33 148 L59 148 Q52 192 62 228 Z" fill="#B9C8D6" stroke="'+INK+'" stroke-width="1.8"/><path d="M33 158 H59" stroke="'+INK+'" stroke-width="1.2" opacity=".4"/>');
+  svg.push('<rect x="64" y="172" width="64" height="56" rx="4" fill="#1E6670" stroke="'+INK+'" stroke-width="1.8"/><rect x="60" y="166" width="72" height="9" rx="2" fill="#174E57" stroke="'+INK+'" stroke-width="1.8"/>');
+  svg.push('<path class="heartsign" d="M96 214 C80 203 82 187 96 195 C110 187 112 203 96 214 Z" stroke="'+INK+'" stroke-width="1.4"/>');
+  svg.push('<g class="v-good"><path d="M118 156 l-6 10 h6 l-4 9" stroke="#F5C518" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>');
+  svg.push('<g class="v-poor"><circle cx="110" cy="150" r="10" fill="#fff" stroke="#C93468" stroke-width="2.4"/><path d="M112 143 l-5 8 h5 l-4 7" stroke="'+INK+'" stroke-width="2" fill="none"/><path d="M103 143 L117 157" stroke="#C93468" stroke-width="2.4"/></g>');
+  // poles + wires
+  svg.push('<path d="M150 182 V240 M300 182 V214" stroke="#6B4F3A" stroke-width="3"/><path d="M143 184 H157 M293 184 H307" stroke="#6B4F3A" stroke-width="2.4"/>');
+  svg.push('<path id="wire" d="M128 186 Q139 196 150 186 Q225 206 300 186 Q330 198 360 200" stroke="'+INK+'" stroke-width="1.4" fill="none"/>');
+  svg.push('<path class="energy" d="M128 186 Q139 196 150 186 Q225 206 300 186 Q330 198 360 200"/>');
+  svg.push('</g>');
+
+  // CONTROL TOWER (brain)
+  svg.push('<g class="d brain" data-d="brain">');
+  svg.push('<path d="M191 232 L209 232 L205 92 L195 92 Z" fill="#E9EDF3" stroke="'+INK+'" stroke-width="1.8"/><path d="M193 150 H207 M194 120 H206 M192 190 H208" stroke="'+INK+'" stroke-width="1" opacity=".35"/>');
+  svg.push('<rect x="176" y="66" width="48" height="28" rx="9" fill="#0E7A7E" stroke="'+INK+'" stroke-width="1.8"/><rect class="podwin" x="182" y="73" width="36" height="9" rx="3"/>');
+  svg.push('<path d="M200 66 V46" stroke="'+INK+'" stroke-width="2"/><circle class="beacon" cx="200" cy="43" r="5.5" stroke="'+INK+'" stroke-width="1.4"/>');
+  svg.push('</g>');
+
+  // BAZAAR (gut)
+  svg.push('<g class="d gut" data-d="gut">');
+  var stalls=[[258,"#F2A20C"],[304,"#C93468"],[350,"#0E7A7E"]];
+  var fruit=[["#E2486F","#F28C28","#7CB342"],["#F2A20C","#7CB342","#E2486F"],["#F28C28","#E2486F","#F5C518"]];
+  stalls.forEach(function(st,i){
+    var x=st[0];
+    svg.push('<path d="M'+(x+3)+' 230 V258 M'+(x+39)+' 230 V258" stroke="'+INK+'" stroke-width="2"/>');
+    svg.push('<rect x="'+x+'" y="232" width="42" height="26" fill="#F6E7CF"/>');
+    svg.push('<g class="v-goodok"><circle cx="'+(x+21)+'" cy="244" r="5" fill="#6B4A3A"/><rect x="'+(x+15)+'" y="249" width="12" height="10" rx="4" fill="'+(i===1?"#0E7A7E":"#C93468")+'"/></g>');
+    svg.push('<rect x="'+x+'" y="256" width="42" height="26" rx="2" fill="#C08A4E" stroke="'+INK+'" stroke-width="1.6"/>');
+    svg.push('<g class="v-goodok">');
+    fruit[i].forEach(function(c,j){ svg.push('<circle cx="'+(x+9+j*12)+'" cy="253" r="5" fill="'+c+'" stroke="'+INK+'" stroke-width="1"/>'); });
+    svg.push('</g>');
+    // awning
+    svg.push('<rect x="'+(x-3)+'" y="217" width="48" height="13" fill="#fff" stroke="'+INK+'" stroke-width="1.6"/>');
+    for(var s=0;s<4;s+=2){ svg.push('<rect x="'+(x-3+s*12)+'" y="217" width="12" height="13" fill="'+st[1]+'"/>'); }
+    for(var c=0;c<4;c++){ svg.push('<circle cx="'+(x+3+c*12)+'" cy="230" r="6" fill="'+(c%2===0?st[1]:"#fff")+'" stroke="'+INK+'" stroke-width="1.2"/>'); }
+    svg.push('<rect x="'+(x-3)+'" y="217" width="48" height="13" fill="none" stroke="'+INK+'" stroke-width="1.6"/>');
+    // shutters
+    var cls = i===2 ? "v-okpoor" : "v-poor";
+    svg.push('<g class="'+cls+'"><rect x="'+(x+1)+'" y="236" width="40" height="46" fill="#8E97A6" stroke="'+INK+'" stroke-width="1.4"/>');
+    for(var l=0;l<6;l++){ svg.push('<path d="M'+(x+1)+' '+(242+l*7)+' H'+(x+41)+'" stroke="'+INK+'" stroke-width=".8" opacity=".45"/>'); }
+    svg.push('</g>');
+  });
+  svg.push('<g class="v-poor" fill="#fff" stroke="'+INK+'" stroke-width="1"><path d="M268 286 l7 -3 l2 5 z"/><path d="M318 287 l9 1 l-3 4 z" fill="#F2A20C"/><circle cx="372" cy="287" r="3"/><path d="M342 285 l6 4 l-7 2 z" fill="#E2486F"/></g>');
+  svg.push('</g>');
+
+  // HOUSES (part of heart: windows light up)
+  svg.push('<g class="d heart" data-d="heart">');
+  var houses=[[8,40,46,"#F6D28B"],[52,34,36,"#9FD3C7"],[90,46,54,"#F3A7B5"],[140,36,40,"#C9B6E4"],[180,46,50,"#A8C8F0"],[230,22,34,"#F7E3A1"]];
+  var wi=0;
+  houses.forEach(function(h,idx){
+    var x=h[0],w=h[1],hh=h[2],top=282-hh;
+    if(idx%2===0){ svg.push('<rect x="'+(x+w-15)+'" y="'+(top-9)+'" width="10" height="9" rx="2" fill="#2A2F3A"/>'); }
+    svg.push('<rect x="'+x+'" y="'+top+'" width="'+w+'" height="'+hh+'" fill="'+h[3]+'" stroke="'+INK+'" stroke-width="1.6"/>');
+    svg.push('<rect x="'+(x-2)+'" y="'+(top-3)+'" width="'+(w+4)+'" height="4" fill="'+h[3]+'" stroke="'+INK+'" stroke-width="1.4"/>');
+    var cols=Math.max(1,Math.floor((w-6)/14));
+    for(var yy=top+8; yy+9<282-14; yy+=16){
+      for(var cc=0; cc<cols; cc++){
+        var cl = (wi%5===0)?"win f1":(wi%5===2||wi%5===3)?"win f2":"win";
+        svg.push('<rect class="'+cl+'" x="'+(x+6+cc*14)+'" y="'+yy+'" width="8" height="9" rx="1" stroke="'+INK+'" stroke-width="1"/>');
+        wi++;
+      }
+    }
+    svg.push('<rect x="'+(x+w/2-4)+'" y="270" width="8" height="12" fill="#7A5537"/>');
+  });
+  svg.push('</g>');
+
+  // ROADS (posture)
+  svg.push('<g class="d posture" data-d="posture">');
+  svg.push('<rect y="282" width="400" height="6" fill="#DDD6C6"/><rect y="288" width="400" height="38" fill="#4A4F5C"/><path d="M0 307 H400" stroke="#F2F2F2" stroke-width="2" stroke-dasharray="12 10"/><rect y="326" width="400" height="5" fill="#DDD6C6"/>');
+  svg.push('<g class="v-good">');
+  [[0,-1],[1,-4.5],[2,-7]].forEach(function(v){ svg.push('<g class="drive" style="animation-delay:'+v[1]+'s">'+veh(v[0],0,289,false)+'</g>'); });
+  [[3,-2],[0,-6]].forEach(function(v){ svg.push('<g class="drive l" style="animation-delay:'+v[1]+'s">'+veh(v[0],0,307,true)+'</g>'); });
+  svg.push('</g>');
+  svg.push('<g class="v-ok slow">');
+  [[0,-2],[1,-8],[2,-14]].forEach(function(v){ svg.push('<g class="drive" style="animation-delay:'+v[1]+'s">'+veh(v[0],0,289,false)+'</g>'); });
+  [[3,-3],[0,-10],[1,-16]].forEach(function(v){ svg.push('<g class="drive l" style="animation-delay:'+v[1]+'s">'+veh(v[0],0,307,true)+'</g>'); });
+  svg.push('</g>');
+  svg.push('<g class="v-poor">');
+  for(var j=0;j<10;j++){ svg.push(veh(j,4+j*40,289,false)); }
+  for(var k2=0;k2<10;k2++){ svg.push(veh(k2+1,-14+k2*40,307,true)); }
+  svg.push('<text class="honk" x="44" y="286">beep!</text><text class="honk" x="166" y="286">poo poo!</text><text class="honk" x="300" y="286">beep!</text><text class="honk" x="236" y="286">beep!</text>');
+  svg.push('</g>');
+  svg.push('</g>');
+
+  // GRASS
+  svg.push('<rect y="331" width="400" height="149" fill="#B9DB97"/>');
+
+  // RIVER (water)
+  svg.push('<g class="d water" data-d="water">');
+  var rp="M214 500 C244 440 300 428 330 402 S382 356 424 346";
+  svg.push('<path d="'+rp+'" stroke="#D7B98A" stroke-width="78" fill="none"/>');
+  svg.push('<g class="v-poor" stroke="#9C7B4E" stroke-width="1.6" fill="none"><path d="M250 452 l6 -4 l-2 -6 l7 -3"/><path d="M286 424 l5 3 l4 -5 l6 2"/><path d="M342 388 l-4 -5 l6 -3 l-2 -6"/><path d="M372 372 l6 -2 l1 -6 l7 -1"/><path d="M234 474 l7 1 l3 -6"/></g>');
+  svg.push('<path class="water" d="'+rp+'"/>');
+  svg.push('<path class="ripple" d="'+rp+'" transform="translate(-9,7)"/><path class="ripple" d="'+rp+'" transform="translate(10,-6)" style="animation-delay:-1s"/>');
+  svg.push('<g class="v-good"><g transform="translate(318,408)"><g class="boat"><path d="M-15 0 L15 0 L10 7 L-10 7 Z" fill="#C93468" stroke="'+INK+'" stroke-width="1.4"/><path d="M0 0 V-16 L10 -4 Z" fill="#fff" stroke="'+INK+'" stroke-width="1.2"/><circle cx="-6" cy="-4" r="3.2" fill="#6B4A3A"/></g></g></g>');
+  svg.push('</g>');
+
+  // PARK (mind)
+  svg.push('<g class="d mind" data-d="mind">');
+  svg.push('<path d="M84 452 Q89 414 87 388 L101 388 Q99 414 106 452 Z" fill="#7A5537" stroke="'+INK+'" stroke-width="1.6"/>');
+  svg.push('<path d="M58 392 V444 M70 396 V440 M122 394 V446 M134 390 V436" stroke="#8A6644" stroke-width="2"/>');
+  [[60,378,26,"c2"],[128,376,27,"c2"],[94,362,34,"c1"],[74,352,22,"c3"],[116,350,22,"c3"],[96,390,24,"c1"]].forEach(function(c){
+    svg.push('<circle class="'+c[3]+'" cx="'+c[0]+'" cy="'+c[1]+'" r="'+c[2]+'" stroke="'+INK+'" stroke-width="1.4"/>');
+  });
+  svg.push('<g class="v-good" fill="#F2A20C"><circle cx="70" cy="356" r="3"/><circle cx="118" cy="366" r="3" fill="#E2486F"/><circle cx="96" cy="342" r="3" fill="#fff"/><circle cx="136" cy="384" r="3"/></g>');
+  svg.push('<path d="M142 444 V452 M180 444 V452" stroke="#6B4A3A" stroke-width="3"/>');
+  svg.push('<g class="v-goodok"><circle cx="153" cy="426" r="5.5" fill="#6B4A3A"/><rect x="147" y="431" width="12" height="13" rx="5" fill="#C93468"/></g>');
+  svg.push('<g class="v-good"><circle cx="171" cy="426" r="5.5" fill="#3B2A22"/><rect x="165" y="431" width="12" height="13" rx="5" fill="#0E7A7E"/></g>');
+  svg.push('<rect x="138" y="441" width="46" height="5" rx="2" fill="#8A5A3B" stroke="'+INK+'" stroke-width="1.2"/>');
+  svg.push('<g class="v-good"><circle cx="30" cy="462" r="4" fill="#F2A20C" stroke="'+INK+'" stroke-width="1"/><circle cx="160" cy="468" r="4" fill="#E2486F" stroke="'+INK+'" stroke-width="1"/><circle cx="196" cy="452" r="4" fill="#fff" stroke="'+INK+'" stroke-width="1"/><circle cx="20" cy="430" r="4" fill="#E2486F" stroke="'+INK+'" stroke-width="1"/></g>');
+  svg.push('<g class="v-poor" fill="#A6865A"><ellipse cx="40" cy="458" rx="5" ry="2.5"/><ellipse cx="128" cy="462" rx="5" ry="2.5"/><ellipse cx="170" cy="460" rx="5" ry="2.5"/><ellipse cx="66" cy="470" rx="5" ry="2.5"/></g>');
+  svg.push('</g>');
+
+  // FOG (brain)
+  svg.push('<g class="fog" fill="#F1F3F6"><ellipse cx="200" cy="80" rx="120" ry="34"/><ellipse cx="80" cy="150" rx="110" ry="30"/><ellipse cx="320" cy="140" rx="110" ry="30"/><ellipse cx="200" cy="200" rx="200" ry="26"/><ellipse cx="60" cy="60" rx="80" ry="22"/><ellipse cx="350" cy="64" rx="70" ry="22"/></g>');
+
+  // CRANES (repair plan)
+  [["brain",246,232],["heart",150,232],["gut",392,282],["water",378,470],["mind",196,470],["posture",350,331]].forEach(function(c){ svg.push(crane(c[0],c[1],c[2])); });
+  // TAGS
+  var tags=[["brain",222,98],["heart",10,124],["gut",298,190],["posture",8,295],["mind",150,346],["water",302,360]];
+  tags.forEach(function(t){
+    var label=D[t[0]].place, w=Math.round(label.length*7.3+30);
+    svg.push('<g class="tg tg-'+t[0]+'" data-d="'+t[0]+'" tabindex="0" role="button" aria-label="'+label+': what this means for '+D[t[0]].body.toLowerCase()+'" transform="translate('+t[1]+','+t[2]+')"><rect class="tbg" width="'+w+'" height="23" rx="11.5" fill="#fff" stroke="'+INK+'" stroke-width="1.8"/><circle class="tdot" cx="12" cy="11.5" r="5" stroke="'+INK+'" stroke-width="1.4"/><text x="22" y="16" font-family="Baloo 2, sans-serif" font-weight="700" font-size="12.5" fill="'+INK+'">'+label+'</text></g>');
+  });
+
+  svg.push('</svg>');
+  return svg.join("");
+}
+
+
+/* ---------- Districts, guidelines, sources ---------- */
+var ORDER = ["brain","gut","water","heart","mind","posture"];
+var D = {
+  brain:{place:"Control Tower", body:"Your brain", fed:"sleep",
+    react:{good:"The sky clears over the Control Tower.",ok:"A light haze settles over the Control Tower.",poor:"Fog rolls in. The Control Tower can barely see."},
+    target:"7 to 9 hours a night",
+    guide:"Adults need 7 or more hours of sleep a night, regularly. Less than that is linked to poorer focus, mood and food choices the next day.",
+    src:"American Academy of Sleep Medicine and Sleep Research Society, consensus recommendation (2015)",
+    tip:"Put your phone on charge across the room 30 minutes before bed, and aim to be asleep by 11."},
+  gut:{place:"Bazaar", body:"Your gut", fed:"food",
+    react:{good:"Every stall in the Bazaar is open and busy.",ok:"A couple of Bazaar shutters come down.",poor:"Shutters slam down across the Bazaar."},
+    target:"5 katoris of veg and fruit, protein at every meal, junk rarely",
+    guide:"Eat at least 400 g of vegetables and fruit a day (about 5 katoris), include pulses, dairy, eggs or meat regularly, and limit foods high in fat, sugar and salt. Keep added sugar under 10% of your energy, ideally under 5% (about 6 teaspoons).",
+    src:"ICMR-NIN Dietary Guidelines for Indians (2024); WHO guideline on sugars intake (2015)",
+    tip:"Add one katori of sabzi or salad to lunch, and swap one packaged snack for fruit or roasted chana."},
+  water:{place:"River", body:"Your hydration", fed:"water",
+    react:{good:"The River fills up and a boat sets off.",ok:"The River flows, but it's running low.",poor:"The River shrinks to a trickle."},
+    target:"about 8 glasses (2 litres), more in heat",
+    guide:"Adequate total water intake is about 2 litres a day for women and 2.5 litres for men, with roughly 70 to 80% coming from drinks. You need more in hot weather and when you exercise.",
+    src:"European Food Safety Authority, Dietary Reference Values for water (2010)",
+    tip:"Fill a 1-litre bottle in the morning and finish it before lunch."},
+  heart:{place:"Power Station", body:"Your heart", fed:"movement",
+    react:{good:"Power's back. Every window lights up.",ok:"Some lights flicker as power runs low.",poor:"Power cut! Windows go dark across the city."},
+    target:"30 minutes a day (150 to 300 a week)",
+    guide:"Adults should do 150 to 300 minutes of moderate activity a week, like brisk walking, plus muscle-strengthening on 2 days. Every bit of movement counts.",
+    src:"WHO Guidelines on Physical Activity and Sedentary Behaviour (2020)",
+    tip:"Take a 10-minute walk after lunch and another after dinner."},
+  mind:{place:"Park", body:"Your mind", fed:"mood and stress",
+    react:{good:"The banyan tree blooms and people fill the benches.",ok:"The Park is quiet today.",poor:"The Park's leaves turn brown and the benches empty."},
+    target:"how you feel; no single number",
+    guide:"Mood here is self-reported. Body City shows patterns, not a diagnosis. Daylight, movement, sleep and time with people all help. If low mood lasts two weeks or more, talking to someone really helps.",
+    src:"Tele-MANAS, Ministry of Health and Family Welfare: free, 24x7 mental health support at 14416",
+    tip:"Step outside in daylight for 10 minutes, without your phone."},
+  posture:{place:"Roads", body:"Your back and blood flow", fed:"breaks from sitting",
+    react:{good:"Traffic is moving smoothly.",ok:"Traffic slows down on the Roads.",poor:"Total jam. Autos honking everywhere."},
+    target:"get up at least every 30 to 60 minutes",
+    guide:"Limit long stretches of sitting and replace them with any movement. A few minutes of light walking every 20 to 30 minutes lowers blood sugar after meals compared to sitting straight through.",
+    src:"WHO Guidelines (2020); Dunstan et al., Diabetes Care (2012)",
+    tip:"Set an hourly reminder to stand up and stretch for 2 minutes."}
+};
+
+var F = {
+  sleep:{label:"Hours of sleep last night", unit:"h", min:3, max:12, step:0.5, def:7, tgt:"Target: 7 to 9 h"},
+  veg:{label:"Katoris of sabzi, salad or fruit", help:"1 katori is about 80 to 100 g", min:0, max:8, step:1, def:2, tgt:"Target: 5"},
+  protein:{label:"Meals that had dal, curd, paneer, eggs, chicken or sprouts", min:0, max:3, step:1, def:2, tgt:"Target: all 3"},
+  junk:{label:"Sweets, cold drinks, chips, namkeen or fried snacks", min:0, max:8, step:1, def:1, tgt:"Keep it to 0 or 1"},
+  chai:{label:"Cups of chai or coffee with sugar", help:"Each cup has about 1 to 2 teaspoons of sugar", min:0, max:8, step:1, def:2, tgt:"Fewer is better"},
+  water:{label:"Glasses of water", help:"1 glass is about 250 ml", min:0, max:16, step:1, def:5, tgt:"Target: about 8"},
+  move:{label:"Minutes of walking, sport, dance or exercise", unit:"min", min:0, max:180, step:5, def:15, tgt:"Target: 30"},
+  sit:{label:"Longest stretch you sat without getting up", unit:"h", min:0.5, max:8, step:0.5, def:2, tgt:"Aim for under 1 h"}
+};
+var STEPS = {brain:["sleep"], gut:["veg","protein","junk","chai"], water:["water"], heart:["move"], mind:["mood","stress"], posture:["sit"]};
+var STEPQ = {brain:"How did you sleep last night?", gut:"What did you eat today?", water:"How much water did you drink?", heart:"How much did you move today?", mind:"How did today feel?", posture:"How long did you sit at a stretch?"};
+var MOODS = [["😞","Very low"],["🙁","Low"],["😐","Okay"],["🙂","Good"],["😄","Great"]];
+var STRESS = ["Calm","Some stress","Very stressed"];
+var DEF = {sleep:7, veg:2, protein:2, junk:1, chai:2, water:5, move:15, sit:2, mood:3, stress:2};
+
+/* ---------- Scoring (0 to 100 per district) ---------- */
+function lin(x, pts){
+  if(x<=pts[0][0]) return pts[0][1];
+  for(var i=1;i<pts.length;i++){ if(x<=pts[i][0]){ var a=pts[i-1], b=pts[i]; return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0]); } }
+  return pts[pts.length-1][1];
+}
+function dscores(r){
+  var junkLoad = r.junk*7 + Math.max(0, r.chai-1)*4;
+  return {
+    brain: Math.round(lin(r.sleep, [[3,0],[5,15],[6,40],[6.5,58],[7,90],[7.5,100],[9,100],[10,80],[12,50]])),
+    gut: Math.round(Math.min(r.veg/5,1)*45 + Math.min(r.protein/3,1)*35 + Math.max(0, 20-junkLoad)),
+    water: Math.round(lin(r.water, [[0,0],[4,35],[6,65],[7,85],[8,100],[16,100]])),
+    heart: Math.round(lin(r.move, [[0,0],[10,30],[20,60],[30,100],[300,100]])),
+    mind: Math.round(((r.mood-1)*25)*0.7 + ({1:100,2:60,3:20}[Math.round(r.stress)]||60)*0.3),
+    posture: Math.round(lin(r.sit, [[0.5,100],[1,90],[2,60],[3,40],[4,25],[6,5],[8,0]]))
+  };
+}
+function stateOf(s){ return s>=70?"good":s>=40?"ok":"poor"; }
+var WORD = {good:"Thriving", ok:"Getting by", poor:"Struggling"};
+function overall(s){ var t=0; ORDER.forEach(function(k){t+=s[k];}); return Math.round(t/ORDER.length); }
+function n1(x){ return (Math.round(x*10)/10).toString(); }
+function vtext(k,r){
+  switch(k){
+    case "brain": return n1(r.sleep)+" h of sleep";
+    case "water": return n1(r.water)+" glasses of water";
+    case "heart": return Math.round(r.move)+" min of movement";
+    case "posture": return n1(r.sit)+" h longest sitting stretch";
+    case "gut": return n1(r.veg)+" katoris veg/fruit, protein at "+n1(r.protein)+" of 3 meals, "+n1(r.junk)+" junk items, "+n1(r.chai)+" sweet chais";
+    case "mind": return "Mood "+n1(r.mood)+"/5, "+STRESS[Math.min(2,Math.max(0,Math.round(r.stress)-1))].toLowerCase();
+  }
+}
+function onTarget(k,r){
+  return {brain:r.sleep>=7&&r.sleep<=9.5, water:r.water>=8, heart:r.move>=30, posture:r.sit<=1, gut:r.veg>=5&&r.protein>=3&&r.junk<=1, mind:r.mood>=4&&r.stress<=2}[k];
+}
+
+/* ---------- Headlines, built from the actual numbers ---------- */
+function headline(k,r){
+  var st=stateOf(dscores(r)[k]);
+  switch(k){
+    case "brain": return {good:"Clear skies! Control Tower sharp after "+n1(r.sleep)+" hours of sleep", ok:"Light haze over the Control Tower after "+n1(r.sleep)+" hours; focus may fade after lunch", poor:"Thick fog grounds the Control Tower after just "+n1(r.sleep)+" hours of sleep"}[st];
+    case "gut": return {good:"Bazaar booming: "+r.veg+" katoris of sabzi and fruit sold today", ok:"Bazaar half busy; vendors want more sabzi and dal", poor:(r.junk>=3?"Bazaar shutters down as "+r.junk+" junk snacks take over":"Bazaar stalls empty: only "+r.veg+" katoris of sabzi or fruit today")}[st];
+    case "water": return {good:"River in full flow at "+r.water+" glasses; boating season is open", ok:"River running low at "+r.water+" glasses; water board wants 8", poor:"River at record low: just "+r.water+" glasses today"}[st];
+    case "heart": return {good:"Power Station at full capacity after "+r.move+" minutes of movement", ok:"Lights flicker as the Power Station runs on "+r.move+" minutes", poor:(r.move===0?"Power cut! Not a single minute of movement today":"Power cuts across the city after only "+r.move+" minutes of movement")}[st];
+    case "mind": return {good:"Park in full bloom; citizens report a "+r.mood+"/5 mood", ok:"Quiet day at the Park; mood steady at "+r.mood+"/5", poor:"Park trees wilting under a heavy cloud of stress"}[st];
+    case "posture": return {good:"Roads clear; nobody sat more than "+n1(r.sit)+" hours at a stretch", ok:"Slow traffic after a "+n1(r.sit)+"-hour sitting stretch", poor:"Massive jam after "+n1(r.sit)+" hours glued to the chair"}[st];
+  }
+}
+function headlines(r){
+  var s=dscores(r);
+  var ks=ORDER.slice().sort(function(a,b){return s[a]-s[b];});
+  var pick=[ks[0],ks[1],ks[5],ks[2]];
+  return pick.map(function(k){return headline(k,r);});
+}
+
+/* ---------- Dates ---------- */
+function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function fromKey(k){ var p=k.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); }
+function addDays(k,n){ var d=fromKey(k); d.setDate(d.getDate()+n); return dkey(d); }
+function diffDays(a,b){ return Math.round((fromKey(b)-fromKey(a))/86400000); }
+function todayKey(){ return dkey(new Date()); }
+function niceDate(k){ return fromKey(k).toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"}); }
+function shortDate(k){ return fromKey(k).toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short"}); }
+function esc(t){ return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+
+/* ---------- Plans: tiny habits, anchored to routines ---------- */
+var PLANS = {
+  water:["Keep a filled bottle where you work or study.","Drink one glass right after you brush your teeth.","Drink a glass of water before every chai.","Finish one full bottle before lunch.","Have a glass with every meal.","Carry your bottle whenever you go out.","Reach 8 glasses today."],
+  brain:["Pick a fixed wake-up time and set the alarm.","No chai or coffee after 4 PM.","Put your phone on charge across the room at bedtime.","Dim lights and screens 30 minutes before bed.","Be in bed by 11, even if you just read.","Get 10 minutes of morning daylight.","Sleep 7 hours tonight."],
+  heart:["Walk for 10 minutes after one meal.","Take the stairs at least once.","Walk 10 minutes after lunch and after dinner.","Walk while you take one phone call.","Do 15 minutes of anything that makes you breathe harder.","Play a sport or dance for 20 minutes.","Reach 30 minutes of movement today."],
+  gut:["Add one katori of sabzi or salad to lunch.","Add dal, curd, paneer or eggs to breakfast.","Swap one packaged snack for fruit or roasted chana.","Make one chai with half the usual sugar.","Have a protein food at all three meals.","Eat dinner before 9 PM.","Fill half your plate with sabzi and salad."],
+  mind:["Step outside in daylight for 10 minutes.","Message or call one friend you enjoy talking to.","Write down one thing that went okay today.","Take 10 slow breaths before you start work.","Do one thing just for fun, for 20 minutes.","Have a meal or chai with someone, phones away.","Plan one small thing to look forward to this week."],
+  posture:["Set an hourly stand-up reminder.","Stand up for every phone call.","Refill your water every hour so you have to get up.","Do a 2-minute stretch after each hour of sitting.","Walk over to talk to someone instead of messaging.","Raise your screen to eye level with a few books.","Don't sit more than 1 hour at a stretch today."]
+};
+
+/* ---------- Demo persona: 21 days of data with real patterns ---------- */
+function rng(seed){ return function(){ seed=(seed*1664525+1013904223)%4294967296; return seed/4294967296; }; }
+function buildDemo(){
+  var r=rng(42), out={}, t=todayKey();
+  for(var i=20;i>=0;i--){
+    var k=addDays(t,-i), wd=fromKey(k).getDay(), weekend=(wd===0||wd===6);
+    var rec;
+    if(weekend){
+      rec={sleep:7.5+Math.round(r()*3)/2, veg:3+Math.floor(r()*3), protein:2+Math.floor(r()*2), junk:Math.floor(r()*2), chai:1+Math.floor(r()*2), water:5+Math.floor(r()*3), move:30+5*Math.floor(r()*8), sit:1+Math.round(r()*2)/2, mood:4+Math.floor(r()*2), stress:1};
+    } else {
+      var short = r()<0.7;
+      rec={sleep: short?5+Math.round(r()*3)/2:7+Math.round(r()*2)/2, veg:1+Math.floor(r()*3), protein:1+Math.floor(r()*2), junk:1+Math.floor(r()*2), chai:2+Math.floor(r()*3), water:3+Math.floor(r()*3), move:5*Math.floor(r()*5), sit:3+Math.round(r()*4)/2, mood:2+Math.floor(r()*2), stress:2+Math.floor(r()*2)};
+      if(!short){ rec.mood=Math.min(5,rec.mood+1); rec.junk=Math.max(0,rec.junk-1); rec.stress=Math.max(1,rec.stress-1); }
+      if(wd===1){ rec.junk+=1; rec.mood=Math.max(1,rec.mood-1); }
+    }
+    out[k]=rec;
+  }
+  // chai and movement shape the next night's sleep
+  var keys=Object.keys(out).sort();
+  for(var j=0;j<keys.length-1;j++){
+    var a=out[keys[j]], b=out[keys[j+1]];
+    if(a.chai>=3) b.sleep=Math.max(4.5,b.sleep-1);
+    if(a.move>=30) b.sleep=Math.min(9,b.sleep+0.5);
+  }
+  // the River repair plan is working: water rising over the last 4 days
+  [3,2,1,0].forEach(function(n,i){ var k=addDays(t,-n); out[k].water=Math.max(out[k].water,5+i); });
+  return out;
+}
+var DEMO = {days:buildDemo(), plan:{d:"water", start:addDays(todayKey(),-3), done:[1,1,1,0,0,0,0]}};
+
+/* ---------- Storage ---------- */
+var KEY="bodycity:v2";
+function loadStore(){ try{ var o=JSON.parse(localStorage.getItem(KEY)||"null"); if(o && typeof o==="object") return {days:o.days||{}, plan:o.plan||null}; }catch(e){} return {days:{}, plan:null}; }
+var store=loadStore();
+function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(store)); return true; }catch(e){ return false; } }
+
+var demo=false;
+function DATA(){ return demo ? DEMO.days : store.days; }
+function PLAN(){ return demo ? DEMO.plan : store.plan; }
+function setPlan(p){ if(demo) DEMO.plan=p; else { store.plan=p; persist(); } }
+
+/* ---------- Analysis ---------- */
+function window_(n){ var data=DATA(), t=todayKey(), out=[]; for(var i=n-1;i>=0;i--){ var k=addDays(t,-i); if(data[k]) out.push({k:k, r:data[k]}); } return out; }
+function avgRec(list){ var a={}; Object.keys(DEF).forEach(function(f){ var s=0; list.forEach(function(x){s+=x.r[f];}); a[f]=list.length?s/list.length:DEF[f]; }); return a; }
+function mean(arr){ return arr.reduce(function(a,b){return a+b;},0)/arr.length; }
+
+function patterns(){
+  var data=DATA(), keys=Object.keys(data).sort(), t=todayKey();
+  keys=keys.filter(function(k){return diffDays(k,t)<28;});
+  var out=[];
+  function split(rows, cond, val){ var A=[],B=[]; rows.forEach(function(x){ (cond(x)?A:B).push(val(x)); }); return (A.length>=2&&B.length>=2)?{a:mean(A),b:mean(B),na:A.length,nb:B.length}:null; }
+  var same=keys.map(function(k){return data[k];});
+  var next=[]; for(var i=0;i<keys.length-1;i++){ if(diffDays(keys[i],keys[i+1])===1) next.push({today:data[keys[i]], next:data[keys[i+1]]}); }
+  var p;
+  p=split(same,function(r){return r.sleep<7;},function(r){return r.mood;});
+  if(p && p.b-p.a>=0.6) out.push({w:(p.b-p.a)/1, d:["brain","mind"], ic:"🌫️", t:"After nights under 7 hours of sleep, your mood averaged "+n1(p.a)+"/5. After 7 or more hours, it was "+n1(p.b)+"/5."});
+  p=split(same,function(r){return r.sleep<7;},function(r){return r.junk;});
+  if(p && p.a-p.b>=0.7) out.push({w:(p.a-p.b)/1.2, d:["brain","gut"], ic:"🍩", t:"On days after short sleep you had "+n1(p.a)+" junk items, compared with "+n1(p.b)+" after a good night. Tired brains reach for quick sugar."});
+  p=split(next,function(x){return x.today.chai>=3;},function(x){return x.next.sleep;});
+  if(p && p.b-p.a>=0.5) out.push({w:(p.b-p.a)/0.8, d:["gut","brain"], ic:"☕", t:"Days with 3 or more sweet chais were followed by "+n1(p.a)+" hours of sleep. Lighter-chai days were followed by "+n1(p.b)+" hours."});
+  p=split(next,function(x){return x.today.move>=30;},function(x){return x.next.sleep;});
+  if(p && p.a-p.b>=0.5) out.push({w:(p.a-p.b)/0.8, d:["heart","brain"], ic:"🚶", t:"After days you moved 30 minutes or more, you slept "+n1(p.a)+" hours. After less active days, "+n1(p.b)+" hours."});
+  p=split(same,function(r){return r.move>=30;},function(r){return r.mood;});
+  if(p && p.a-p.b>=0.6) out.push({w:(p.a-p.b)/1, d:["heart","mind"], ic:"🌳", t:"On days you moved 30+ minutes, your mood averaged "+n1(p.a)+"/5, compared with "+n1(p.b)+"/5 on other days."});
+  out.sort(function(a,b){return b.w-a.w;});
+  return {list:out, n:keys.length};
+}
+function trends(){
+  var w=window_(7); if(w.length<5) return [];
+  var recent=avgRec(w.slice(-3)), before=avgRec(w.slice(0,-3)), sr=dscores(recent), sb=dscores(before), out=[];
+  ORDER.forEach(function(k){
+    var d=sr[k]-sb[k]; if(Math.abs(d)<12) return;
+    var up=d>0;
+    var unit={brain:["sleep","h",recent.sleep,before.sleep],water:["water","glasses",recent.water,before.water],heart:["move","min",recent.move,before.move],posture:["sit","h longest sit",recent.sit,before.sit],gut:["veg","katoris veg/fruit",recent.veg,before.veg],mind:["mood","/5 mood",recent.mood,before.mood]}[k];
+    out.push({k:k, up:up, t:(up?"Your "+D[k].place+" is recovering: ":"Your "+D[k].place+" is slipping: ")+n1(unit[3])+" → "+n1(unit[2])+" "+unit[1]+" a day over the last 3 days."});
+  });
+  return out;
+}
+function weekdayPattern(){
+  var data=DATA(), keys=Object.keys(data); if(keys.length<14) return null;
+  var by={}; keys.forEach(function(k){ var wd=fromKey(k).getDay(); (by[wd]=by[wd]||[]).push(overall(dscores(data[k]))); });
+  var names=["Sundays","Mondays","Tuesdays","Wednesdays","Thursdays","Fridays","Saturdays"], best=null, worst=null;
+  Object.keys(by).forEach(function(wd){ if(by[wd].length<2) return; var m=mean(by[wd]); if(!best||m>best.m) best={wd:wd,m:m}; if(!worst||m<worst.m) worst={wd:wd,m:m}; });
+  if(!best||!worst||best.m-worst.m<12) return null;
+  return "Your city is healthiest on "+names[best.wd]+" (average "+Math.round(best.m)+") and struggles most on "+names[worst.wd]+" (average "+Math.round(worst.m)+").";
+}
+function bestDay(){
+  var w=window_(14); if(w.length<3) return null;
+  var b=w.reduce(function(a,x){ return overall(dscores(x.r))>overall(dscores(a.r))?x:a; });
+  var r=b.r;
+  return {k:b.k, t:"Your best day was "+shortDate(b.k)+" (City Health "+overall(dscores(r))+"): "+n1(r.sleep)+" h sleep, "+r.move+" min moving, "+r.water+" glasses of water, "+r.veg+" katoris of veg and fruit, mood "+r.mood+"/5."};
+}
+function weakestKey(r){ var s=dscores(r); return ORDER.slice().sort(function(a,b){return s[a]-s[b];})[0]; }
+
+/* ---------- City ---------- */
+var host=document.getElementById("cityHost");
+host.innerHTML=buildCity();
+var city=host.querySelector("svg");
+function paint(el, r){ var s=r?dscores(r):null; ORDER.forEach(function(k){ el.setAttribute("data-"+k, s?stateOf(s[k]):"ok"); }); }
+function focusOn(k){ if(k) city.setAttribute("data-focus",k); else city.removeAttribute("data-focus"); }
+function paintRepair(){ var p=PLAN(); if(p && planIndex(p)<=6 && countDone(p)<7) city.setAttribute("data-repair",p.d); else city.removeAttribute("data-repair"); }
+function setTicker(list){
+  var run=document.getElementById("tickerRun");
+  run.innerHTML=list.map(function(h){return "<span>"+esc(h)+"</span>";}).join("");
+  run.style.setProperty("--dur", Math.max(22, list.join(" ").length*0.16)+"s");
+  run.style.animation="none"; void run.offsetWidth; run.style.animation="";
+}
+var IDLE_NEWS=["Welcome to Body City, population: one (you)","Mayor promises a full check-in in under a minute","Control Tower, Bazaar and River await today's report"];
+
+/* ---------- App state ---------- */
+var panel=document.getElementById("panel");
+var tab="today", viewKey=null, draft=null, step=0, downloads=null, sampleNS=null, useClaude=false;
+var chat=[]; var chatBusy=false;
+
+function hasData(){ return Object.keys(DATA()).length>0; }
+function latestKey(){ var ks=Object.keys(DATA()).sort(); return ks[ks.length-1]; }
+
+function render(){
+  document.body.classList.toggle("checking", tab==="checkin");
+  if(!demo && !hasData() && tab!=="checkin"){ renderIntro(); return; }
+  if(tab==="checkin"){ renderCheckin(); return; }
+  paintRepair();
+  var shell = demoBar() + tabsBar();
+  var body = {today:viewToday, week:viewWeek, insights:viewInsights, plan:viewPlan, mayor:viewMayor}[tab]();
+  panel.innerHTML = shell + body;
+  if(tab==="week") fillMinis();
+  if(tab==="mayor") afterMayor();
+  var at=panel.querySelector('.tab[aria-selected="true"]'), tb=panel.querySelector(".tabs"); if(at&&tb) tb.scrollLeft=Math.max(0, at.offsetLeft-tb.offsetLeft-tb.clientWidth+at.offsetWidth+8);
+}
+function demoBar(){
+  if(!demo) return "";
+  return '<div class="demo-bar"><span>You\'re exploring <b>Riya\'s demo city</b>: 3 weeks of a final-year student\'s check-ins.</span><button class="btn link" data-action="exitdemo">Exit demo</button></div>';
+}
+function tabsBar(){
+  var t=[["today","Today"],["week","Week"],["insights","Insights"],["plan","Plan"],["mayor","Mayor"]];
+  return '<div class="tabs" role="tablist">'+t.map(function(x){return '<button class="tab" role="tab" aria-selected="'+(tab===x[0])+'" data-action="tab" data-t="'+x[0]+'">'+x[1]+'</button>';}).join("")+'</div>';
+}
+
+/* ---------- Intro ---------- */
+function renderIntro(){
+  focusOn(null); paint(city,null); city.removeAttribute("data-repair"); setTicker(IDLE_NEWS);
+  panel.innerHTML='<div class="stack">'+
+    '<h1>This city is you.</h1>'+
+    '<p class="lede">Every part of the city runs on one of your daily habits: sleep, food, water, movement, mood and sitting. Log today in under a minute and watch the city react, scored against WHO and ICMR guidelines.</p>'+
+    '<div class="row"><button class="btn primary" data-action="start">Check in today</button>'+
+    '<button class="btn ghost" data-action="demo">Explore a demo city</button></div>'+
+    '<p class="note">The demo loads 3 weeks of data for Riya, a final-year student, so you can see the insights, the repair plan and the Mayor in action. Everything runs on your phone; nothing you enter leaves it.</p>'+
+    '</div>';
+}
+
+/* ---------- Check-in ---------- */
+function renderCheckin(){
+  var k=ORDER[step];
+  focusOn(k); paint(city, draft); city.removeAttribute("data-repair");
+  var prog=ORDER.map(function(_,i){return '<i class="'+(i<step?"done":i===step?"now":"")+'"></i>';}).join("");
+  var fields=STEPS[k].map(fieldHtml).join("");
+  panel.innerHTML=
+    '<div class="progress" aria-hidden="true">'+prog+'</div>'+
+    '<div class="qmeta"><span>Step '+(step+1)+' of 6</span><button class="btn link" data-action="cancel">Cancel</button></div>'+
+    '<h2 style="margin-top:12px" id="qh">'+esc(STEPQ[k])+'</h2>'+
+    '<p class="feeds"><span class="dot '+stateOf(dscores(draft)[k])+'" id="fdot" aria-hidden="true"></span>Powers the '+esc(D[k].place)+', which is '+esc(D[k].body.toLowerCase())+'</p>'+
+    '<div style="margin-top:12px">'+fields+'</div>'+
+    '<p class="reaction" id="reaction" role="status"></p>'+
+    '<div class="navrow">'+(step>0?'<button class="btn ghost" data-action="prev">Back</button>':'<span></span>')+
+    '<button class="btn primary" data-action="next">'+(step===5?"See my city":"Next")+'</button></div>';
+  if(window.innerWidth<900) window.scrollTo(0,0);
+}
+function fieldHtml(f){
+  if(f==="mood") return '<div class="field"><span class="flab" id="lab-mood">Your mood today</span><div class="faces" role="group" aria-labelledby="lab-mood">'+MOODS.map(function(m,i){return '<button class="chip" data-action="setf" data-f="mood" data-v="'+(i+1)+'" aria-pressed="'+(draft.mood===i+1)+'"><span aria-hidden="true">'+m[0]+'</span>'+m[1]+'</button>';}).join("")+'</div></div>';
+  if(f==="stress") return '<div class="field"><span class="flab" id="lab-stress">Stress level</span><div class="three" role="group" aria-labelledby="lab-stress">'+STRESS.map(function(m,i){return '<button class="chip" data-action="setf" data-f="stress" data-v="'+(i+1)+'" aria-pressed="'+(draft.stress===i+1)+'">'+m+'</button>';}).join("")+'</div></div>';
+  var c=F[f];
+  return '<div class="field"><label id="lab-'+f+'">'+esc(c.label)+'</label>'+(c.help?'<small>'+esc(c.help)+'</small>':'')+
+    '<div class="stepper"><button data-action="dec" data-f="'+f+'" aria-label="Less">−</button>'+
+    '<div class="val" aria-live="polite" aria-labelledby="lab-'+f+'" id="val-'+f+'">'+n1(draft[f])+(c.unit?'<small>'+c.unit+'</small>':'')+'</div>'+
+    '<button data-action="inc" data-f="'+f+'" aria-label="More">+</button><span class="tgt">'+esc(c.tgt)+'</span></div></div>';
+}
+function changed(f){
+  var k=ORDER[step]; paint(city, draft);
+  var st=stateOf(dscores(draft)[k]);
+  document.getElementById("fdot").className="dot "+st;
+  if(F[f]){ document.getElementById("val-"+f).innerHTML=n1(draft[f])+(F[f].unit?'<small>'+F[f].unit+'</small>':''); }
+  else panel.querySelectorAll('[data-f="'+f+'"]').forEach(function(b){ b.setAttribute("aria-pressed", String(+b.getAttribute("data-v")===draft[f])); });
+  document.getElementById("reaction").innerHTML='<span class="dot '+st+'" aria-hidden="true"></span>'+esc(D[k].react[st]);
+}
+function finish(){
+  var k=todayKey(), data=DATA();
+  data[k]=Object.assign({}, draft);
+  var ok = demo ? true : persist();
+  tab="today"; viewKey=k; render(); window.scrollTo({top:0,behavior:"smooth"});
+  if(!ok) toast("Your city is shown, but this browser won't let it be saved for later.");
+}
+
+/* ---------- Today ---------- */
+function viewToday(){
+  var data=DATA(), k=viewKey && data[viewKey] ? viewKey : (data[todayKey()] ? todayKey() : null);
+  if(!k){
+    var lk=latestKey(); focusOn(null); paint(city, data[lk]); setTicker(headlines(data[lk]));
+    return '<div class="stack"><h2>No check-in yet today</h2><p class="lede">Your city is still showing '+esc(niceDate(lk))+'. Check in to update it.</p><div class="row"><button class="btn primary" data-action="start">Check in today</button></div></div>';
+  }
+  var r=data[k], s=dscores(r), o=overall(s), st=stateOf(o), wk=weakestKey(r);
+  focusOn(null); paint(city,r); setTicker(headlines(r));
+  var allGood=ORDER.every(function(x){return stateOf(s[x])==="good";});
+  var pat=patterns().list.filter(function(p){return p.d.indexOf(wk)>=0;})[0];
+  var tip = allGood ? "Your city is thriving. Keep tomorrow just like today." : D[wk].tip;
+  var title = k===todayKey() ? "Your city today" : "Your city on "+shortDate(k);
+  var html='<div class="stack">'+
+    '<div><p class="note">'+esc(niceDate(k))+'</p><h2>'+esc(title)+'</h2></div>'+
+    '<div class="scoreline"><div class="score">'+o+'<small>/100</small></div><div class="word" style="color:var(--'+st+')">'+WORD[st]+'<span>City Health, scored against health guidelines</span></div></div>'+
+    '<div class="mayor"><span class="hat" aria-hidden="true">🏛️</span><div><h3>'+(allGood?"Mayor's note":"Fix the "+esc(D[wk].place)+" first")+'</h3><p>'+esc(tip)+'</p>'+(pat&&!allGood?'<p class="note" style="margin-top:6px;color:#3d4760">Why this one: '+esc(pat.t)+'</p>':'')+'</div></div>'+
+    '<div><p class="section-h">You vs the guidelines</p><div class="vs">'+ORDER.map(function(x){return vrow(x,r,s[x]);}).join("")+'</div></div>'+
+    '<div class="row">'+(downloads?'<button class="btn primary" data-action="postcard" data-k="'+k+'">Send a postcard</button>':'')+
+    (k===todayKey()?'<button class="btn ghost" data-action="start">Edit today\'s check-in</button>':'<button class="btn ghost" data-action="tab" data-t="week">Back to the week</button>')+'</div>'+
+    '</div>';
+  return html;
+}
+function vrow(k,r,sc){
+  var st=stateOf(sc), col={good:"#4FB04A",ok:"#F2B21C",poor:"#E2486F"}[st];
+  return '<button class="vrow" data-action="district" data-d="'+k+'"><b><span class="dot '+st+'" aria-hidden="true"></span>'+esc(D[k].place)+'</b><span class="num">'+sc+'</span>'+
+    '<span class="bar" aria-hidden="true"><i style="width:'+Math.max(3,sc)+'%;background:'+col+'"></i></span>'+
+    '<small>'+esc(vtext(k,r))+'. Guideline: '+esc(D[k].target)+'.</small></button>';
+}
+
+/* ---------- Week ---------- */
+function viewWeek(){
+  var data=DATA(), t=todayKey(), keys=[]; for(var i=6;i>=0;i--) keys.push(addDays(t,-i));
+  var lk=data[t]?t:latestKey(); focusOn(null); paint(city,data[lk]); setTicker(headlines(data[lk]));
+  var html='<div class="stack"><div><h2>Your week in Body City</h2><p class="lede">Each tile is one day. Tap a day to open that city.</p></div><div class="week">';
+  keys.forEach(function(k,i){
+    var name=fromKey(k).toLocaleDateString("en-IN",{weekday:"short"});
+    if(!data[k]){ html+='<div class="wday empty"><div class="mini-wrap">No check-in</div><div class="lab"><b>'+name+'</b><span></span></div></div>'; return; }
+    var o=overall(dscores(data[k]));
+    html+='<button class="wday" data-action="day" data-k="'+k+'" aria-label="'+name+', City Health '+o+'"><div class="mini-wrap" data-mini="'+k+'"></div><div class="lab"><b>'+name+'</b><span><span class="dot '+stateOf(o)+'" style="display:inline-block;width:10px;height:10px"></span> '+o+'</span></div></button>';
+  });
+  html+='</div>';
+  if(!data[t]) html+='<div class="row"><button class="btn primary" data-action="start">Check in today</button></div>';
+  return html+'</div>';
+}
+function fillMinis(){
+  var data=DATA();
+  panel.querySelectorAll("[data-mini]").forEach(function(slot){
+    var m=city.cloneNode(true); m.removeAttribute("data-focus"); m.removeAttribute("data-repair"); m.classList.add("mini");
+    m.setAttribute("aria-hidden","true"); m.removeAttribute("role"); m.removeAttribute("aria-labelledby");
+    var t=m.querySelector("title"); if(t) t.remove();
+    m.querySelectorAll(".tg").forEach(function(n){n.remove();});
+    paint(m, data[slot.getAttribute("data-mini")]); slot.appendChild(m);
+  });
+}
+
+/* ---------- Insights ---------- */
+function viewInsights(){
+  var w=window_(7), data=DATA();
+  var lk=data[todayKey()]?todayKey():latestKey(); focusOn(null); paint(city,data[lk]); setTicker(headlines(data[lk]));
+  if(w.length<3) return '<div class="stack"><h2>Insights</h2><p class="lede">Insights appear after 3 check-ins in a week. You have '+w.length+' so far. Patterns between your habits show up after about a week.</p>'+(demo?'':'<div class="row"><button class="btn ghost" data-action="demo">See insights in the demo city</button></div>')+'</div>';
+  var a=avgRec(w), s=dscores(a), pats=patterns(), tr=trends(), wp=weekdayPattern(), bd=bestDay();
+  var html='<div class="stack"><div><h2>Insights</h2><p class="lede">Your last 7 days, averaged and compared with health guidelines.</p></div>';
+  html+='<div class="vs">'+ORDER.slice().sort(function(x,y){return s[x]-s[y];}).map(function(k){
+    var days=w.filter(function(x){return onTarget(k,x.r);}).length;
+    var st=stateOf(s[k]), col={good:"#4FB04A",ok:"#F2B21C",poor:"#E2486F"}[st];
+    return '<button class="vrow" data-action="district" data-d="'+k+'"><b><span class="dot '+st+'" aria-hidden="true"></span>'+esc(D[k].place)+'</b><span class="num">'+s[k]+'</span><span class="bar" aria-hidden="true"><i style="width:'+Math.max(3,s[k])+'%;background:'+col+'"></i></span><small>Average '+esc(vtext(k,a))+'. On target '+days+' of '+w.length+' days. Guideline: '+esc(D[k].target)+'.</small></button>';
+  }).join("")+'</div>';
+  html+='<div><p class="section-h">Patterns in your data</p>';
+  if(pats.list.length){ html+='<div class="stack" style="--g:8px">'+pats.list.slice(0,3).map(function(p){return '<div class="insight"><span class="ic" aria-hidden="true">'+p.ic+'</span><span>'+esc(p.t)+'</span></div>';}).join("")+'</div><p class="note" style="margin-top:8px">Based on '+pats.n+' days of your check-ins. These are patterns, not proof of cause.</p>'; }
+  else html+='<p class="note">No strong links between your habits yet. Patterns usually show up after 10 to 14 days of check-ins.</p>';
+  html+='</div>';
+  if(tr.length||wp||bd){
+    html+='<div><p class="section-h">What\'s changing</p><div class="stack">';
+    tr.forEach(function(x){ html+='<div class="insight"><span class="ic" aria-hidden="true">'+(x.up?"📈":"📉")+'</span><span>'+esc(x.t)+'</span></div>'; });
+    if(wp) html+='<div class="insight"><span class="ic" aria-hidden="true">📅</span><span>'+esc(wp)+'</span></div>';
+    if(bd) html+='<div class="insight"><span class="ic" aria-hidden="true">⭐</span><span>'+esc(bd.t)+'</span></div>';
+    html+='</div></div>';
+  }
+  var wk=ORDER.slice().sort(function(x,y){return s[x]-s[y];})[0];
+  html+='<div class="row"><button class="btn primary" data-action="tab" data-t="plan">'+(PLAN()?"Open my repair plan":"Repair the "+esc(D[wk].place))+'</button><button class="btn ghost" data-action="tab" data-t="mayor">Ask the Mayor</button></div></div>';
+  return html;
+}
+
+/* ---------- Plan ---------- */
+function planIndex(p){ return diffDays(p.start, todayKey()); }
+function countDone(p){ return p.done.reduce(function(a,b){return a+(b?1:0);},0); }
+function viewPlan(){
+  var data=DATA(), lk=data[todayKey()]?todayKey():latestKey(); focusOn(null); paint(city,data[lk]); setTicker(headlines(data[lk]));
+  var p=PLAN();
+  var method='<p class="note">Each task is tiny on purpose and tied to something you already do. Small wins that stack up are more likely to stick than big resolutions (BJ Fogg, Tiny Habits, 2019; Gollwitzer on implementation intentions, 1999).</p>';
+  if(!p){
+    var w=window_(7), s=dscores(avgRec(w.length?w:[{r:data[lk]}])), rec=ORDER.slice().sort(function(a,b){return s[a]-s[b];})[0];
+    return '<div class="stack"><div><h2>Pick a district to repair</h2><p class="lede">A 7-day plan with one tiny task a day. Cranes appear over that part of the city until it\'s rebuilt.</p></div>'+
+      '<div class="insight"><span class="ic" aria-hidden="true">🏗️</span><span>Recommended: <b>the '+esc(D[rec].place)+'</b>. It has the biggest gap from its guideline this week ('+esc(vtext(rec,avgRec(w.length?w:[{r:data[lk]}])))+').</span></div>'+
+      '<div class="pick">'+ORDER.map(function(k){return '<button class="dbtn" data-action="startplan" data-d="'+k+'"><span class="dot '+stateOf(s[k])+'" aria-hidden="true"></span><span><b>'+esc(D[k].place)+(k===rec?' ★':'')+'</b><small>'+esc(D[k].fed)+'</small></span></button>';}).join("")+'</div>'+method+'</div>';
+  }
+  var idx=planIndex(p), done=countDone(p), over=idx>6||done===7;
+  var html='<div class="stack"><div class="plan-head"><div><p class="note">7-day repair plan</p><h2>'+(over?(done>=5?"The "+esc(D[p.d].place)+" is rebuilt!":"Plan finished"):"Rebuilding the "+esc(D[p.d].place))+'</h2></div><b style="font-family:var(--display);font-size:20px">'+done+'/7 done</b></div>'+
+    '<div class="pbar" aria-hidden="true"><i style="width:'+Math.round(done/7*100)+'%"></i></div>';
+  if(over) html+='<p>'+(done>=5?"You completed "+done+" of 7 tasks. Check the Insights tab to see if the "+esc(D[p.d].place)+" score moved.":"You completed "+done+" of 7 tasks. A fresh start often works better than catching up.")+'</p>';
+  html+='<ul class="tasks">'+PLANS[p.d].map(function(t,i){
+    var locked=i>idx, isToday=i===idx;
+    var lab=isToday?"Today":locked?"Day "+(i+1)+", unlocks "+shortDate(addDays(p.start,i)):"Day "+(i+1);
+    return '<li class="task'+(isToday?" today":"")+(locked?" locked":"")+'"><button class="tick" data-action="tick" data-i="'+i+'" aria-pressed="'+(!!p.done[i])+'" aria-label="Mark day '+(i+1)+' done" '+(locked?"disabled":"")+'>'+(p.done[i]?"✓":"")+'</button><span class="tx"><small>'+esc(lab)+'</small>'+esc(t)+'</span></li>';
+  }).join("")+'</ul>';
+  html+=method+'<div class="row">'+(over?'<button class="btn primary" data-action="newplan">Start a new plan</button>':'')+'<button class="btn link" data-action="newplan">'+(over?"":"Stop and pick another district")+'</button></div></div>';
+  return html;
+}
+
+/* ---------- Mayor: on-device agent ---------- */
+var KW = {
+  brain:/sleep|slept|insomnia|night|bed ?time|nap|fog|tower|neend/,
+  water:/water|drink|hydrat|thirst|river|paani|pani/,
+  heart:/move|moving|walk|exercis|workout|gym|steps|active|power|lights|run|sport|yoga/,
+  gut:/food|eat|diet|junk|sugar|chai|tea|coffee|protein|veg|sabzi|bazaar|snack|meal|crav|khaana|khana/,
+  mind:/mood|stress|sad|anxi|happy|low|park|lonely|overwhelm|worr|tension/,
+  posture:/sit|sitting|back|neck|posture|chair|desk|traffic|road|stiff/
+};
+var CRISIS=/suicid|kill myself|end my life|want to die|self.?harm|hurt myself|no reason to live/;
+var MEDICAL=/chest pain|can'?t breathe|breathless|faint|unconscious|blood|seizure|high fever|stroke/;
+
+function daysWord(n){ return n===1?"your one check-in":"your last "+n+" days"; }
+function mayorStats(){
+  var w=window_(7); if(!w.length) return null;
+  var a=avgRec(w); return {w:w, a:a, s:dscores(a), pats:patterns().list, tr:trends()};
+}
+function localAnswer(q){
+  var t=q.toLowerCase();
+  if(CRISIS.test(t)) return ["I'm really glad you said something. You don't have to handle this alone. Please talk to someone right now: Tele-MANAS is free and open 24x7 at 14416 (or 1-800-891-4416). If you are in immediate danger, call 112.","If you can, also reach out to one person you trust and tell them how you're feeling."];
+  if(MEDICAL.test(t)) return ["That sounds like something a doctor should look at, not a city mayor. If it's sudden or severe, call 112 or go to the nearest emergency department."];
+  var st=mayorStats();
+  if(!st) return ["I run on your check-ins, and I don't have any yet. Do today's check-in (it takes under a minute) and I'll be able to tell you exactly what's going on in your city."];
+  var a=st.a, s=st.s, worst=ORDER.slice().sort(function(x,y){return s[x]-s[y];});
+  if(/^(hi|hello|hey|namaste|hii+)\b/.test(t) && t.length<25) return ["Namaste! I'm the Mayor of Body City. I've read "+daysWord(st.w.length)+" of check-ins and can tell you what's dragging the city down, what's improving, and what to fix first. Try asking \"Why am I tired?\" or \"What should I fix first?\""];
+  if(/who are you|are you (an )?ai|how do you work|what can you do|^help/.test(t)) return ["I'm an on-device agent. I look at your check-ins, compare them with WHO and ICMR guidelines, look for patterns between your habits, and suggest one small next step. I run entirely on your phone, so your data never leaves it, and I don't need an account or the internet.","I'm not a doctor and can't diagnose anything, but I can tell you what your own numbers say."];
+  if(/tired|exhaust|energy|sleepy|drained|thak|fatigue|lazy/.test(t)){
+    var r=[], out=[];
+    if(a.sleep<7) r.push("you're averaging "+n1(a.sleep)+" hours of sleep, below the 7-hour minimum");
+    if(a.water<6) r.push("you're drinking about "+n1(a.water)+" glasses of water a day, and mild dehydration feels like tiredness");
+    if(a.move<20) r.push("you're moving about "+Math.round(a.move)+" minutes a day; oddly, low activity makes you feel more tired, not less");
+    if(a.chai>=3) r.push("you're having about "+n1(a.chai)+" sweet chais a day, and late caffeine and sugar dips can both hit your energy");
+    if(r.length) out.push("Looking at "+daysWord(st.w.length)+", a few things stand out: "+r.join("; ")+".");
+    else out.push("Your sleep, water and movement look fine this week, so it's probably not your habits.");
+    var p=st.pats.filter(function(x){return x.d.indexOf("brain")>=0;})[0]; if(p) out.push("From your own data: "+p.t);
+    out.push(r.length?"Start with the first one: "+D[a.sleep<7?"brain":a.water<6?"water":"heart"].tip:"");
+    out.push("If you feel tired most days even when you sleep well, see a doctor. Common causes in India like anaemia or thyroid problems show up in a simple blood test.");
+    return out.filter(Boolean);
+  }
+  if(/weight|fat|lose|slim|diet plan|calorie/.test(t)) return ["Body City doesn't track weight, and I'd rather not guess at a number for you. What I can see is the two districts that matter most for it: your Bazaar ("+vtext("gut",a)+") and your Power Station ("+Math.round(a.move)+" min a day against a 30-minute guideline).","For a personal weight plan, a registered dietitian or doctor is the right person. Until then, more sabzi and dal, fewer packaged snacks, and a daily walk move both districts in the right direction."];
+  if(/best day/.test(t)){ var bd=bestDay(); return [bd?bd.t+" That's your own recipe for a good day.":"I need a few more check-ins to pick your best day."]; }
+  if(/first|focus|priorit|fix|improve|what should i|tomorrow|start/.test(t)){
+    var k=worst[0], k2=worst[1], p2=st.pats.filter(function(x){return x.d.indexOf(k)>=0;})[0];
+    var out2=["Fix the "+D[k].place+" first. It has the biggest gap from its guideline. You're averaging "+vtext(k,a)+", and the guideline is "+D[k].target+"."];
+    if(p2) out2.push("And it's connected to other parts of your city. "+p2.t);
+    out2.push("One tiny step for tomorrow: "+PLANS[k][0]+" The Plan tab turns this into a 7-day repair, one small task a day.");
+    out2.push("After that, look at the "+D[k2].place+" ("+vtext(k2,a)+").");
+    return out2;
+  }
+  if(/how am i|how was|my week|summary|progress|doing|score|overall|report/.test(t)){
+    var good=ORDER.filter(function(x){return stateOf(s[x])==="good";}), bad=ORDER.filter(function(x){return stateOf(s[x])==="poor";});
+    var o=["Over "+daysWord(st.w.length)+", City Health averaged "+overall(s)+"/100."];
+    if(good.length) o.push("Thriving: "+good.map(function(x){return D[x].place;}).join(", ")+".");
+    if(bad.length) o.push("Struggling: "+bad.map(function(x){return D[x].place+" ("+vtext(x,a)+")";}).join("; ")+".");
+    st.tr.forEach(function(x){o.push(x.t);});
+    return o;
+  }
+  if(/chai|coffee|\btea\b|caffeine|sugar/.test(t)){
+    var tsp=a.chai*1.5, pc=st.pats.filter(function(x){return x.ic==="☕";})[0];
+    var oc=["You're having about "+n1(a.chai)+" cups of sweet chai or coffee a day. At 1 to 2 teaspoons each, that's roughly "+n1(tsp)+" teaspoons of sugar from chai alone, before any sweets or cold drinks. WHO suggests keeping added sugar ideally under about 6 teaspoons a day."];
+    if(pc) oc.push("Your own data shows it affects your sleep too. "+pc.t);
+    oc.push("Chai itself isn't the problem. Two easy changes: no chai after 4 PM, and halve the sugar in one cup a day.");
+    return oc;
+  }
+  var hit=ORDER.filter(function(k){return KW[k].test(t);});
+  if(hit.length){
+    var k3=hit[0], days=st.w.filter(function(x){return onTarget(k3,x.r);}).length, sc=s[k3];
+    var o3=["Your "+D[k3].place+" is "+WORD[stateOf(sc)].toLowerCase()+" this week ("+sc+"/100). You're averaging "+vtext(k3,a)+", and you hit the guideline on "+days+" of "+st.w.length+(st.w.length===1?" day":" days")+"."];
+    var p3=st.pats.filter(function(x){return x.d.indexOf(k3)>=0;})[0]; if(p3) o3.push("Something from your own data: "+p3.t);
+    var tr3=st.tr.filter(function(x){return x.k===k3;})[0]; if(tr3) o3.push(tr3.t);
+    o3.push(stateOf(sc)==="good"&&days*2>=st.w.length&&!(tr3&&!tr3.up)?"Keep doing what you're doing.":"Try this: "+D[k3].tip);
+    o3.push("Guideline: "+D[k3].guide+" (Source: "+D[k3].src+")");
+    return o3;
+  }
+  return ["I'm not sure I follow. I'm best at questions about your sleep, food, water, movement, mood and sitting. Try \"Why is my River low?\", \"Why am I tired?\" or \"What should I fix first?\""];
+}
+function viewMayor(){
+  var data=DATA(), lk=data[todayKey()]?todayKey():latestKey(); focusOn(null); paint(city,data[lk]); setTicker(headlines(data[lk]));
+  if(!chat.length) chat.push({who:"mayor", parts:localAnswer("hello")});
+  var sugg=["What should I fix first?","Why am I tired?","How was my week?","Why is my River low?","How's my sleep?","What was my best day?"];
+  var html='<div class="stack"><div><h2>Ask the Mayor</h2><p class="note">Answers come from your own check-ins and health guidelines. Runs on your phone: free, private, no login.</p></div>'+
+    '<div class="chat" id="chat" aria-live="polite">'+chat.map(msgHtml).join("")+'</div>'+
+    '<div class="suggest">'+sugg.map(function(x){return '<button data-action="ask" data-q="'+esc(x)+'">'+esc(x)+'</button>';}).join("")+'</div>'+
+    '<div class="ask"><input id="askInput" type="text" placeholder="Ask about your city…" aria-label="Ask the Mayor" autocomplete="off" maxlength="300"><button class="btn primary" data-action="send">Ask</button></div>';
+  if(sampleNS) html+='<label class="switch"><input type="checkbox" id="claudeToggle" '+(useClaude?"checked":"")+'> Smarter answers with Claude (uses your Claude account)</label>';
+  html+='<p class="note">The Mayor isn\'t a doctor and can\'t diagnose anything. For anything worrying, see a doctor; in an emergency call 112.</p></div>';
+  return html;
+}
+function msgHtml(m){
+  if(m.who==="me") return '<div class="msg me">'+esc(m.text)+'</div>';
+  return '<div class="msg bot"><span class="who">🏛️ Mayor</span>'+m.parts.map(function(p){return "<p>"+esc(p)+"</p>";}).join("")+'</div>';
+}
+function afterMayor(){
+  var c=document.getElementById("chat"); if(c){ var mes=c.querySelectorAll(".msg.me"), lm=mes[mes.length-1]; c.style.scrollBehavior="auto"; c.scrollTop = lm ? lm.offsetTop - 6 : 0; c.style.scrollBehavior=""; }
+  var inp=document.getElementById("askInput");
+  if(inp) inp.addEventListener("keydown",function(e){ if(e.key==="Enter"){ e.preventDefault(); ask(inp.value); } });
+  var tg=document.getElementById("claudeToggle"); if(tg) tg.addEventListener("change",function(){ useClaude=tg.checked; });
+}
+function ask(q){
+  q=(q||"").trim(); if(!q||chatBusy) return;
+  chat.push({who:"me", text:q});
+  var t=q.toLowerCase();
+  if(useClaude && sampleNS && !CRISIS.test(t) && !MEDICAL.test(t)){
+    chatBusy=true; var m={who:"mayor", parts:["Thinking…"]}; chat.push(m); render();
+    askClaude(q).then(function(txt){ m.parts=txt.split(/\n\s*\n/).map(function(x){return x.trim();}).filter(Boolean); })
+      .catch(function(){ m.parts=localAnswer(q); m.parts.push("(Claude wasn't available, so this answer came from the on-device Mayor.)"); })
+      .then(function(){ chatBusy=false; if(tab==="mayor") render(); });
+  } else {
+    chat.push({who:"mayor", parts:localAnswer(q)}); render();
+  }
+  var inp=document.getElementById("askInput"); if(inp) inp.focus();
+}
+function askClaude(q){
+  var st=mayorStats();
+  var ctx={days_logged:st?st.w.length:0, averages_last_7_days:st?st.a:null, district_scores_0_100:st?st.s:null,
+    patterns:st?st.pats.map(function(p){return p.t;}):[], trends:st?st.tr.map(function(p){return p.t;}):[],
+    guidelines:ORDER.reduce(function(o,k){o[D[k].place+" ("+D[k].fed+")"]=D[k].guide+" Source: "+D[k].src; return o;},{})};
+  var sys="You are the Mayor of Body City, a playful health app for young Indians where the user's body is a city (Control Tower=sleep, Bazaar=food, River=water, Power Station=movement, Park=mood, Roads=sitting). Answer the user's question using ONLY their data below and the guidelines. Use plain, simple English, under 110 words, 2 to 3 short paragraphs separated by blank lines, no markdown, no lists. Quote their actual numbers. End with one tiny, specific action. Never diagnose; for worrying symptoms suggest a doctor. Indian context (dal, sabzi, chai, katori).\n\nUSER DATA:\n"+JSON.stringify(ctx);
+  var turns=[{role:"user",content:sys+"\n\nQUESTION: "+q}];
+  return sampleNS(turns,{modelTier:"quick"}).then(function(r){ if(!r||!r.text) throw new Error("empty"); return r.text; });
+}
+
+/* ---------- District sheet ---------- */
+var sheetBack=document.getElementById("sheetBack"), sheet=document.getElementById("sheet"), lastFocus=null;
+function openDistrict(k){
+  var d=D[k], data=DATA(), r=null;
+  if(tab==="checkin" && draft) r=draft; else { var kk=(tab==="today"&&viewKey&&data[viewKey])?viewKey:(data[todayKey()]?todayKey():latestKey()); r=kk?data[kk]:null; }
+  var st=r?stateOf(dscores(r)[k]):null;
+  lastFocus=document.activeElement;
+  sheet.innerHTML='<div class="head"><div><p class="note">'+esc(d.body)+', fed by '+esc(d.fed)+'</p><h2 id="sheetTitle">'+esc(d.place)+'</h2></div><button class="close" data-action="close" aria-label="Close">×</button></div>'+
+    (st?'<p class="state"><span class="dot '+st+'" aria-hidden="true"></span>'+WORD[st]+': '+esc(vtext(k,r))+'</p>':'<p class="state note">Check in to see how this district is doing.</p>')+
+    '<h4>The guideline</h4><p>'+esc(d.guide)+'</p><p class="src">Source: '+esc(d.src)+'</p>'+
+    '<h4>What helps</h4><p>'+esc(d.tip)+'</p>';
+  sheetBack.hidden=false; sheet.querySelector(".close").focus();
+}
+function closeSheet(){ sheetBack.hidden=true; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+sheetBack.addEventListener("click",function(e){ if(e.target===sheetBack) closeSheet(); });
+document.addEventListener("keydown",function(e){
+  if(e.key==="Escape"&&!sheetBack.hidden) closeSheet();
+  if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("tg")){ e.preventDefault(); openDistrict(e.target.getAttribute("data-d")); }
+});
+
+var toastEl=document.getElementById("toast"), toastT=null;
+function toast(msg){ toastEl.textContent=msg; toastEl.hidden=false; clearTimeout(toastT); toastT=setTimeout(function(){toastEl.hidden=true;},3200); }
+
+/* ---------- Postcard ---------- */
+function postcard(k){
+  var r=DATA()[k]; if(!r||!downloads) return;
+  var s=dscores(r), o=overall(s), st=stateOf(o), news=headlines(r);
+  var m=city.cloneNode(true); m.classList.add("mini"); m.removeAttribute("data-focus");
+  m.querySelectorAll(".tg").forEach(function(n){n.remove();});
+  paint(m,r); m.setAttribute("width","800"); m.setAttribute("height","960");
+  var img=new Image();
+  img.onload=function(){
+    var W=1600,H=1000,c=document.createElement("canvas"); c.width=W; c.height=H; var x=c.getContext("2d");
+    x.fillStyle="#FFFBF0"; x.fillRect(0,0,W,H); x.strokeStyle="#1F2B45"; x.lineWidth=6; x.strokeRect(18,18,W-36,H-36);
+    var ix=50,iy=56,iw=740,ih=888;
+    x.save(); x.beginPath(); if(x.roundRect) x.roundRect(ix,iy,iw,ih,28); else x.rect(ix,iy,iw,ih); x.clip(); x.drawImage(img,ix,iy,iw,ih); x.restore();
+    x.lineWidth=5; x.beginPath(); if(x.roundRect) x.roundRect(ix,iy,iw,ih,28); else x.rect(ix,iy,iw,ih); x.stroke();
+    x.setLineDash([10,10]); x.lineWidth=3; x.strokeStyle="#C9C2B0"; x.beginPath(); x.moveTo(840,90); x.lineTo(840,910); x.stroke(); x.setLineDash([]);
+    x.fillStyle="#F2A20C"; x.fillRect(1380,70,150,180); x.strokeStyle="#1F2B45"; x.lineWidth=4; x.strokeRect(1380,70,150,180);
+    x.fillStyle="#1F2B45"; x.textAlign="center"; x.font='800 74px "Baloo 2", sans-serif'; x.fillText(String(o),1455,175);
+    x.font='600 22px "Mukta", sans-serif'; x.fillText("City Health",1455,215); x.textAlign="left";
+    x.fillStyle="#56627A"; x.font='500 38px "Mukta", sans-serif'; x.fillText("Greetings from",890,150);
+    x.fillStyle="#1F2B45"; x.font='800 104px "Baloo 2", sans-serif'; x.fillText("Body City",882,250);
+    x.fillStyle="#56627A"; x.font='500 32px "Mukta", sans-serif'; x.fillText(niceDate(k),890,310);
+    x.fillStyle={good:"#3E8E3A",ok:"#C77F00",poor:"#C93468"}[st]; x.font='800 56px "Baloo 2", sans-serif'; x.fillText(WORD[st],890,420);
+    x.fillStyle="#1F2B45"; x.font='700 30px "Baloo 2", sans-serif'; x.fillText("Today's headline",890,500);
+    x.font='500 36px "Mukta", sans-serif'; wrap(x,"“"+news[0]+"”",890,550,640,48);
+    x.fillStyle="#56627A"; x.font='500 26px "Mukta", sans-serif'; x.fillText("Build your own city, one habit at a time.",890,900);
+    c.toBlob(function(b){
+      if(!b){ toast("Couldn't create the postcard image."); return; }
+      downloads.save({filename:"body-city-"+k+".png", data:b}).then(function(res){ if(res&&res.status==="saved") toast("Postcard saved."); })
+      .catch(function(err){ var code=err&&err.code; if(code==="declined") return; if(code==="rate_limited"){ toast("A save prompt is already open."); return; } downloads=null; render(); toast("Postcards can't be saved in this view."); });
+    },"image/png");
+  };
+  img.onerror=function(){ toast("Couldn't create the postcard image."); };
+  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(m));
+}
+function wrap(ctx,text,x,y,maxW,lh){ var words=text.split(" "),line=""; for(var i=0;i<words.length;i++){ var tst=line?line+" "+words[i]:words[i]; if(ctx.measureText(tst).width>maxW&&line){ ctx.fillText(line,x,y); y+=lh; line=words[i]; } else line=tst; } if(line) ctx.fillText(line,x,y); }
+
+/* ---------- Events ---------- */
+var resetArmed=false, resetT=null;
+document.addEventListener("click",function(e){
+  var tg=e.target.closest&&e.target.closest(".tg,.d");
+  if(tg&&city.contains(tg)){ openDistrict(tg.getAttribute("data-d")); return; }
+  var b=e.target.closest&&e.target.closest("[data-action]"); if(!b) return;
+  var a=b.getAttribute("data-action"), f=b.getAttribute("data-f");
+  if(a==="start"){ var ex=DATA()[todayKey()]; draft=Object.assign({},DEF,ex||{}); step=0; tab="checkin"; render(); }
+  else if(a==="cancel"){ tab="today"; render(); }
+  else if(a==="next"){ if(step<5){ step++; render(); } else finish(); }
+  else if(a==="prev"){ if(step>0){ step--; render(); } }
+  else if(a==="inc"||a==="dec"){ var c=F[f]; draft[f]=Math.min(c.max,Math.max(c.min, Math.round((draft[f]+(a==="inc"?c.step:-c.step))*10)/10)); changed(f); }
+  else if(a==="setf"){ draft[f]=+b.getAttribute("data-v"); changed(f); }
+  else if(a==="demo"){ demo=true; DEMO={days:buildDemo(), plan:{d:"water", start:addDays(todayKey(),-3), done:[1,1,1,0,0,0,0]}}; chat=[]; tab="insights"; viewKey=null; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  else if(a==="exitdemo"){ demo=false; chat=[]; tab="today"; viewKey=null; render(); }
+  else if(a==="tab"){ tab=b.getAttribute("data-t"); if(tab==="today") viewKey=null; render(); }
+  else if(a==="day"){ viewKey=b.getAttribute("data-k"); tab="today"; render(); window.scrollTo({top:0,behavior:"smooth"}); }
+  else if(a==="district"){ openDistrict(b.getAttribute("data-d")); }
+  else if(a==="close"){ closeSheet(); }
+  else if(a==="postcard"){ postcard(b.getAttribute("data-k")); }
+  else if(a==="startplan"){ setPlan({d:b.getAttribute("data-d"), start:todayKey(), done:[0,0,0,0,0,0,0]}); render(); toast("Cranes are up over the "+D[b.getAttribute("data-d")].place+"."); }
+  else if(a==="newplan"){ setPlan(null); render(); }
+  else if(a==="tick"){ var p=PLAN(), i=+b.getAttribute("data-i"); p.done[i]=p.done[i]?0:1; setPlan(p); render(); if(countDone(p)===7) toast("All 7 done. The "+D[p.d].place+" is rebuilt!"); }
+  else if(a==="ask"){ ask(b.getAttribute("data-q")); }
+  else if(a==="send"){ var inp=document.getElementById("askInput"); ask(inp&&inp.value); }
+  else if(a==="reset"){
+    if(!resetArmed){ resetArmed=true; b.textContent="Tap again to erase all your check-ins"; clearTimeout(resetT); resetT=setTimeout(function(){resetArmed=false;b.textContent="Reset my city";},4000); return; }
+    resetArmed=false; b.textContent="Reset my city"; store={days:{},plan:null}; try{localStorage.removeItem(KEY);}catch(err){}
+    demo=false; chat=[]; tab="today"; render(); toast("Your city has been reset.");
+  }
+});
+
+/* ---------- Start ---------- */
+render();
+(function initCaps(){
+  try{
+    if(window.claude&&typeof window.claude.use==="function"){
+      window.claude.use("downloads").then(function(ns){ if(ns){ downloads=ns; if(tab==="today") render(); } }).catch(function(){});
+      window.claude.use("sample").then(function(ns){ if(ns){ sampleNS=ns; if(tab==="mayor") render(); } }).catch(function(){});
+    }
+  }catch(e){}
+})();
+
+})();
+</script>
+</body>
+</html>
